@@ -1,0 +1,4 @@
+
+# app-335@productsraiting.iam.gserviceaccount.com
+wb otz https://feedbacks-api.wb.ru/api/v1/feedbacks/products/rating/nmid
+
