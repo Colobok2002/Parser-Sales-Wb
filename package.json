@@ -3,6 +3,6 @@
     "nodemon": "^2.0.22"
   },
   "scripts": {
-    "start": "nodemon --exec 'python3 -u main.py' -e py"
+    "start": "nodemon --exec 'python3 -u pars.py' -e py"
   }
 }

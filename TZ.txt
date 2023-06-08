@@ -2,3 +2,11 @@
 # app-335@productsraiting.iam.gserviceaccount.com
 wb otz https://feedbacks-api.wb.ru/api/v1/feedbacks/products/rating/nmid
 
+
+
+
+
+
+
+"start": "nodemon --exec 'python3 -u main.py' -e py"
+

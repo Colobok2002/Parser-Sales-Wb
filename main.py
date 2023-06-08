@@ -1,8 +1,9 @@
 import httplib2
 import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
-import datetime
-
+from pars import wb,ozon
+from apscheduler.schedulers.blocking import BlockingScheduler
+from datetime import datetime, timedelta
 
 class GoogleSheets:
 
@@ -261,7 +262,7 @@ class GoogleSheets:
             merge_request = {
                 'mergeCells': {
                     'range': {
-                        'sheetId': sheet['properties']['index'],
+                        'sheetId': sheet['properties']['sheetId'],
                         'startRowIndex': rov_start,
                         'endRowIndex': rov_fin,
                         'startColumnIndex': start_range,
@@ -281,15 +282,76 @@ class GoogleSheets:
             return {'status': False, 'error': str(e)}
 
 
-def add_data_wb() -> None:
+def add_data_wb(table,date) -> None:
     """add_data_wb Данные с WB
 
     Получает и записывает даннные с WB и записывает в таблицу
     """
+    
+    name_shhet = 'wb'
+    apiGoogle.addColumn(table,name_shhet)
+    data = apiGoogle.GetData(table, name_shhet)
 
-    table = '1IyJOfrpPEsild28yttS5yUm9lqkwUUFmO3AqMU-BSmU'
+    if data['status']:
+        data = data['data']
 
-    name_shhet = 'Первый лист'
+    data_data = [['Рейтинг', 'Разница_р', 'Отзывов', 'Разница_о']]
+
+    col = apiGoogle.number_to_column(
+        data[next(iter(data))]['Рейтинг']['column']+5)
+
+    if col['status']:
+        col = col['data']
+
+    apiGoogle.addData(table, name_shhet, f"{col}1", [
+        [date]])
+
+    col = f"{col}{next(iter(data))-1}"
+
+    apiGoogle.merge_cells(table, name_shhet, data[next(iter(
+        data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
+
+    for i in data:
+        print(i)
+        if data[i]['WB']['value'] == "" or "!" in data[i]['WB']['value']:
+            reit , colvo_rev =  0 , 0
+        else:
+            reit , colvo_rev =  wb(data[i]['WB']['value'])
+
+        col_start = apiGoogle.number_to_column(
+            data[i]['Рейтинг']['column']+5)
+        if col_start:
+            col_start = col_start['data']
+        col_fin = apiGoogle.number_to_column(
+            data[i]['Рейтинг']['column']+1)
+        if col_fin:
+            col_fin = col_fin['data']
+        form1 = f"={col_start}{i}-{col_fin}{i}"
+
+        col_start = apiGoogle.number_to_column(
+            data[i]['Отзывов']['column']+5)
+        if col_start:
+            col_start = col_start['data']
+        col_fin = apiGoogle.number_to_column(
+            data[i]['Отзывов']['column']+1)
+        if col_fin:
+            col_fin = col_fin['data']
+        form2 = f"={col_start}{i}-{col_fin}{i}"
+
+        data_data.append([reit, form1, colvo_rev, form2])
+
+    apiGoogle.addData(table, name_shhet, col, data_data)
+
+def add_data_ozon(table,date) -> None:
+    """add_data_wb Данные с Ozon
+
+    Получает и записывает даннные с Ozon и записывает в таблицу
+    """
+
+
+    name_shhet = 'ozon'
+    
+    apiGoogle.addColumn(table,name_shhet)
 
     data = apiGoogle.GetData(table, name_shhet)
 
@@ -305,7 +367,7 @@ def add_data_wb() -> None:
         col = col['data']
 
     apiGoogle.addData(table, name_shhet, f"{col}1", [
-        [datetime.datetime.now().strftime('%d.%m.%y')]])
+        [date]])
 
     col = f"{col}{next(iter(data))-1}"
 
@@ -313,9 +375,11 @@ def add_data_wb() -> None:
         data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
 
     for i in data:
-
-        reit = 2
-        colvo_rev = 2
+        print(i)
+        if data[i]['OZON']['value'] == "" or "!" in data[i]['OZON']['value']:
+            reit , colvo_rev =  0 , 0
+        else:
+            reit , colvo_rev =  ozon(data[i]['OZON']['value'])
 
         col_start = apiGoogle.number_to_column(
             data[i]['Рейтинг']['column']+5)
@@ -342,24 +406,40 @@ def add_data_wb() -> None:
     apiGoogle.addData(table, name_shhet, col, data_data)
 
 
+
+def main() -> None:
+    table = '1yU_reTudQhR0ggF-6ZhVucY771kw-udYbvKveq6sGuE'
+    date = datetime.now().strftime('%d.%m.%y')
+    print(f"Программа запущена в 23:55 по МСК {date}")
+    
+    
+    add_data_wb(table,date)
+    add_data_ozon(table,date)
+    print('[+] Finished')
+
 if __name__ == '__main__':
 
     apiGoogle = GoogleSheets('productsraiting-93d7111b4c98.json')
 
     def create_table():
 
-        table = GoogleSheets().AddTable()['spreadsheet']
+        table = apiGoogle.AddTable(name="Статистика маркетплейсов", properties = {'sheetType': 'GRID', 'sheetId': 0, 'title': 'wb', 'gridProperties': {'rowCount': 0, 'columnCount': 0}})['spreadsheet']
 
-        GoogleSheets().AddServiceAccount(table, emailAddress="wotwotwot65@gmail.com")
+        apiGoogle.AddServiceAccount(table, emailAddress="wotwotwot65@gmail.com")
 
         print('https://docs.google.com/spreadsheets/d/' + table)
 
-        GoogleSheets().AddList(table, name='wb')
-        GoogleSheets().AddList(table, name='wb')
+        apiGoogle.AddList(table, name='ozon')
 
         return table
 
     if 1 != 1:
         create_table()
+    
+    print('[+] Start')
+    scheduler = BlockingScheduler()
 
-    # add_data_wb()
+    scheduler.add_job(main, 'cron', hour=23, minute=55)
+
+    # scheduler.add_job(main, 'cron', hour=18, minute=44)
+    scheduler.start()
