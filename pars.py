@@ -12,7 +12,7 @@ import re
 
 from time import sleep
 
-server, wisual = False, False
+server, wisual = True, False
 
 
 def wait_by_class(class_name, driver):
