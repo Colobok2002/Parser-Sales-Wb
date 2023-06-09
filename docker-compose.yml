@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # command: gunicorn myviews.wsgi:application --bind 0.0.0.0:8080
-    restart: always
-    command: python3 main.py
     volumes:
       - .:/riche
+    command: python main.py

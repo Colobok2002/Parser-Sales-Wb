@@ -10,18 +10,16 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import re
 
-from time import sleep
-
 server, wisual = True, False
 
 
 def wait_by_class(class_name, driver):
 
-    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+    return WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
 
 def wait_by_Xpath(class_name, driver):
 
-    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, class_name)))
+    return WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.XPATH, class_name)))
 
 
 def wb(prodId, lvl=0):
@@ -46,14 +44,16 @@ def wb(prodId, lvl=0):
     try:
         driver.get(
             f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
+
         driver.execute_script(
             "arguments[0].scrollIntoView();", wait_by_class('details-section', driver))
         reit = wait_by_class('user-opinion__rating-numb', driver).text.replace('.', ',')
         col = re.findall(
             r'\d+', wait_by_class('user-opinion__text', driver).text)[0]
-
+        
         return reit, col
-    except:
+    except Exception as e:
+        print(e)
         return wb(prodId, lvl+1)
 
 

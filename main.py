@@ -418,6 +418,7 @@ def main() -> None:
     print('[+] Finished')
 
 if __name__ == '__main__':
+    
 
     apiGoogle = GoogleSheets('productsraiting-93d7111b4c98.json')
 
@@ -436,7 +437,10 @@ if __name__ == '__main__':
     if 1 != 1:
         create_table()
     
+    main()
+    
     print('[+] Start')
+    print(datetime.now())
     scheduler = BlockingScheduler()
 
     scheduler.add_job(main, 'cron', hour=23, minute=55)

@@ -1,22 +1,26 @@
 FROM python:3.9
 
-# set environment variables
+# Установка зависимостей
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# Установка переменных среды
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV TZ Europe/Moscow
 
-# set work directory
+# Установка рабочей директории
 WORKDIR /riche
 
-# install psycopg2 dependencies
-RUN apt update
-
-# install dependencies
+# Обновление pip и установка зависимостей Python
 RUN pip install --upgrade pip
 COPY ./req.txt .
 RUN pip3 install -r req.txt
-RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
-RUN rm google-chrome-stable_current_amd64.deb 
-# copy project
+
+# Копирование проекта
 COPY . .
 
+# Запуск команды по умолчанию
+CMD python main.py
