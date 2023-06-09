@@ -7,11 +7,14 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 import re
 
-server, wisual = True, False
+server, wisual = False, False
 
+DEBYG = False
+
+if not DEBYG:
+    server, wisual = False, False
 
 def wait_by_class(class_name, driver):
 
@@ -53,7 +56,8 @@ def wb(prodId, lvl=0):
         
         return reit, col
     except Exception as e:
-        print(e)
+        if DEBYG:
+            print(e)
         return wb(prodId, lvl+1)
 
 
@@ -86,7 +90,9 @@ def ozon(prodId, lvl=0):
         text = wait_by_Xpath('//*[@id="comments"]/div',driver).text
         
         return reit, text
-    except:
+    except Exception as e:
+        if DEBYG:
+            print(e)
         return ozon(prodId, lvl+1)
     
 

@@ -1,7 +1,7 @@
 import httplib2
 import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
-from pars import wb,ozon
+from pars import wb,ozon , DEBYG
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta
 
@@ -312,7 +312,8 @@ def add_data_wb(table,date) -> None:
         data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
 
     for i in data:
-        print(i)
+        if DEBYG:
+            print(i)
         if data[i]['WB']['value'] == "" or "!" in data[i]['WB']['value']:
             reit , colvo_rev =  0 , 0
         else:
@@ -375,7 +376,8 @@ def add_data_ozon(table,date) -> None:
         data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
 
     for i in data:
-        print(i)
+        if DEBYG:
+            print(i)
         if data[i]['OZON']['value'] == "" or "!" in data[i]['OZON']['value']:
             reit , colvo_rev =  0 , 0
         else:
@@ -419,7 +421,7 @@ def main() -> None:
 
 if __name__ == '__main__':
     
-
+    
     apiGoogle = GoogleSheets('productsraiting-93d7111b4c98.json')
 
     def create_table():
@@ -437,13 +439,16 @@ if __name__ == '__main__':
     if 1 != 1:
         create_table()
     
-    main()
+    if DEBYG:
+        main()
+
+    else:
     
-    print('[+] Start')
-    print(datetime.now())
-    scheduler = BlockingScheduler()
+        print('[+] Start')
+        # print(datetime.now())
+        scheduler = BlockingScheduler()
 
-    scheduler.add_job(main, 'cron', hour=23, minute=55)
+        scheduler.add_job(main, 'cron', hour=23, minute=55)
 
-    # scheduler.add_job(main, 'cron', hour=18, minute=44)
-    scheduler.start()
+        # scheduler.add_job(main, 'cron', hour=18, minute=44)
+        scheduler.start()
