@@ -22,12 +22,12 @@ if not DEBYG:
 
 def wait_by_class(class_name, driver):
 
-    return WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
 
 
 def wait_by_Xpath(class_name, driver):
 
-    return WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.XPATH, class_name)))
+    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, class_name)))
 
 
 def wb(prodId, lvl=0):
@@ -62,6 +62,7 @@ def wb(prodId, lvl=0):
 
         return reit, col
     except Exception as e:
+        driver.close()
         if DEBYG:
             print(e)
         return wb(prodId, lvl+1)
@@ -69,12 +70,13 @@ def wb(prodId, lvl=0):
 
 def ozon(prodId, lvl=0):
 
-    if lvl > 3:
+    if lvl > 15:
         return 0, 0
 
     try:
         options = Options()
-
+        # options.add_argument('--headless=new')
+        
         if server:
             options.add_argument('--headless=new')
             options.add_argument('--no-sandbox')
@@ -85,13 +87,13 @@ def ozon(prodId, lvl=0):
 
         options.add_argument("--window-size=1600,1000")
 
-        options.add_experimental_option("prefs", {"profiles.default_content_setting_values.notifications" : 2})
-        options.add_argument("--allow-profiles-outside-user-dir")
+        # options.add_experimental_option("prefs", {"profiles.default_content_setting_values.notifications" : 2})
+        # options.add_argument("--allow-profiles-outside-user-dir")
 
-        if server:
-            options.add_argument(f"user-data-dir={os.getcwd()}/profiles/main")
-        else:
-            options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\main")
+        # if server:
+        #     options.add_argument(f"user-data-dir={os.getcwd()}/profiles/main")
+        # else:
+        #     options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\main")
             
         driver = webdriver.Chrome(service=ChromeService(
             ChromeDriverManager().install()), options=options)
@@ -105,6 +107,7 @@ def ozon(prodId, lvl=0):
 
         return reit, text
     except Exception as e:
+        driver.close()
         if DEBYG:
             print(e)
         return ozon(prodId, lvl+1)
