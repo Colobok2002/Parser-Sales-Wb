@@ -1,9 +1,11 @@
 import httplib2
 import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
-from pars import wb,ozon , DEBYG
+from pars import wb,ozon , DEBYG , ozon_test
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime, timedelta
+from time import sleep
+from random import randint
 
 class GoogleSheets:
 
@@ -312,34 +314,37 @@ def add_data_wb(table,date) -> None:
         data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
 
     for i in data:
-        if DEBYG:
-            print(i)
-        if data[i]['WB']['value'] == "" or "!" in data[i]['WB']['value']:
-            reit , colvo_rev =  0 , 0
-        else:
-            reit , colvo_rev =  wb(data[i]['WB']['value'])
+        try:
+            if DEBYG:
+                print(i)
+            if data[i]['WB']['value'] == "" or "!" in data[i]['WB']['value']:
+                reit , colvo_rev =  0 , 0
+            else:
+                reit , colvo_rev =  wb(data[i]['WB']['value'])
 
-        col_start = apiGoogle.number_to_column(
-            data[i]['Рейтинг']['column']+5)
-        if col_start:
-            col_start = col_start['data']
-        col_fin = apiGoogle.number_to_column(
-            data[i]['Рейтинг']['column']+1)
-        if col_fin:
-            col_fin = col_fin['data']
-        form1 = f"={col_start}{i}-{col_fin}{i}"
+            col_start = apiGoogle.number_to_column(
+                data[i]['Рейтинг']['column']+5)
+            if col_start:
+                col_start = col_start['data']
+            col_fin = apiGoogle.number_to_column(
+                data[i]['Рейтинг']['column']+1)
+            if col_fin:
+                col_fin = col_fin['data']
+            form1 = f"={col_start}{i}-{col_fin}{i}"
 
-        col_start = apiGoogle.number_to_column(
-            data[i]['Отзывов']['column']+5)
-        if col_start:
-            col_start = col_start['data']
-        col_fin = apiGoogle.number_to_column(
-            data[i]['Отзывов']['column']+1)
-        if col_fin:
-            col_fin = col_fin['data']
-        form2 = f"={col_start}{i}-{col_fin}{i}"
+            col_start = apiGoogle.number_to_column(
+                data[i]['Отзывов']['column']+5)
+            if col_start:
+                col_start = col_start['data']
+            col_fin = apiGoogle.number_to_column(
+                data[i]['Отзывов']['column']+1)
+            if col_fin:
+                col_fin = col_fin['data']
+            form2 = f"={col_start}{i}-{col_fin}{i}"
 
-        data_data.append([reit, form1, colvo_rev, form2])
+            data_data.append([reit, form1, colvo_rev, form2])
+        except KeyError:
+            continue
 
     apiGoogle.addData(table, name_shhet, col, data_data)
 
@@ -376,34 +381,37 @@ def add_data_ozon(table,date) -> None:
         data))]['Рейтинг']['column']+4, data[next(iter(data))]['Рейтинг']['column']+8)
 
     for i in data:
-        if DEBYG:
-            print(i)
-        if data[i]['OZON']['value'] == "" or "!" in data[i]['OZON']['value']:
-            reit , colvo_rev =  0 , 0
-        else:
-            reit , colvo_rev =  ozon(data[i]['OZON']['value'])
+        try:
+            if DEBYG:
+                print(i)
+            if data[i]['OZON']['value'] == "" or "!" in data[i]['OZON']['value']:
+                reit , colvo_rev =  0 , 0
+            else:
+                reit , colvo_rev =  ozon_test(data[i]['OZON']['value'])
+        
+            col_start = apiGoogle.number_to_column(
+                data[i]['Рейтинг']['column']+5)
+            if col_start:
+                col_start = col_start['data']
+            col_fin = apiGoogle.number_to_column(
+                data[i]['Рейтинг']['column']+1)
+            if col_fin:
+                col_fin = col_fin['data']
+            form1 = f"={col_start}{i}-{col_fin}{i}"
 
-        col_start = apiGoogle.number_to_column(
-            data[i]['Рейтинг']['column']+5)
-        if col_start:
-            col_start = col_start['data']
-        col_fin = apiGoogle.number_to_column(
-            data[i]['Рейтинг']['column']+1)
-        if col_fin:
-            col_fin = col_fin['data']
-        form1 = f"={col_start}{i}-{col_fin}{i}"
+            col_start = apiGoogle.number_to_column(
+                data[i]['Отзывов']['column']+5)
+            if col_start:
+                col_start = col_start['data']
+            col_fin = apiGoogle.number_to_column(
+                data[i]['Отзывов']['column']+1)
+            if col_fin:
+                col_fin = col_fin['data']
+            form2 = f"={col_start}{i}-{col_fin}{i}"
 
-        col_start = apiGoogle.number_to_column(
-            data[i]['Отзывов']['column']+5)
-        if col_start:
-            col_start = col_start['data']
-        col_fin = apiGoogle.number_to_column(
-            data[i]['Отзывов']['column']+1)
-        if col_fin:
-            col_fin = col_fin['data']
-        form2 = f"={col_start}{i}-{col_fin}{i}"
-
-        data_data.append([reit, form1, colvo_rev, form2])
+            data_data.append([reit, form1, colvo_rev, form2])
+        except KeyError:
+            continue
 
     apiGoogle.addData(table, name_shhet, col, data_data)
 
@@ -414,8 +422,7 @@ def main() -> None:
     date = datetime.now().strftime('%d.%m.%y')
     print(f"Программа запущена в 23:55 по МСК {date}")
     
-    
-    # add_data_wb(table,date)
+    add_data_wb(table,date)
     add_data_ozon(table,date)
     print('[+] Finished')
 
