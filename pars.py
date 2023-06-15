@@ -18,7 +18,7 @@ import os
 
 server, wisual = False, False
 
-DEBYG = False
+DEBYG = True
 
 if not DEBYG:
     server, wisual = False, False
@@ -85,6 +85,79 @@ def wb(prodId, lvl=0):
         return wb(prodId, lvl+1)
 
 
+def new_test(prodId, lvl=0):
+    """new_test парсинг с wb
+
+    Функция через селениум получает данные и взврашает 
+    
+    рейтинг:float ; 
+    колличество отзывов:int ; 
+    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов'); 
+    цены : list ('nov текушаяя цена': 'значение','old старая цена': 'значение','delt скидка': 'значение' )
+
+    Args:
+        prodId (_type_): артикул wb
+        lvl (int, optional): Уровень вложености . Defaults to 0.
+        
+    """
+    options = Options()
+
+    if server:
+        options.add_argument('--headless=new')
+        options.add_argument('--no-sandbox')
+
+    if not wisual:
+        options.add_argument('--headless=new')
+        options.add_argument('--disable-gpu')
+
+    options.add_argument("--window-size=1200,2000")
+
+    driver = webdriver.Chrome(service=ChromeService(
+        ChromeDriverManager().install()), options=options)
+
+    if lvl > 15:
+        
+        return 0, 0
+    
+    try:
+        
+        driver.get(
+            f'https://www.wildberries.ru/catalog/83511998/feedbacks')
+
+        
+        reit = wait_by_class('rating-product__all-rating', driver).text
+        
+        col = wait_by_class('rating-product__review',driver).find_element(By.TAG_NAME,"span").text.replace(' ', '')
+        
+        reit_star = {}
+        for i in driver.find_elements(By.CLASS_NAME,'feedback-percent'):
+            reit_star[i.find_element(By.CLASS_NAME,'feedback-percent__star').text] = str(round((int(col)*int(i.find_element(By.CLASS_NAME,'feedback-percent__count').text.replace('%','')))/100,0)).split('.')[0]
+
+        
+        prise = {}
+        
+        prise['nov'] = wait_by_class('product-line__price-now',driver).get_attribute("innerHTML")
+        prise['old'] = wait_by_class('product-line__price-old',driver).text
+        match = re.search(r'(\d+)\s*(&nbsp;)?₽', prise['nov'])
+        prise['nov'] = match.group(1)
+        match = re.search(r'(\d+(?: \d+)*)\s*₽', prise['old'])
+        prise['old'] = match.group(1).replace(' ','')
+    
+        prise['delt'] = str(round((int(prise['nov'])/int(prise['old']))*100,0)).split('.')[0]
+        
+        return reit, col , reit_star ,prise
+    
+    except Exception as e:
+        
+        driver.close()
+        
+        if DEBYG:
+            
+            print(e)
+            
+        return new_test(prodId, lvl+1)
+
+
 def ozon(prodId, lvl=0):
 
     if lvl > 15:
@@ -136,8 +209,9 @@ def ozon(prodId, lvl=0):
     #     r'\d+', wait_by_class('user-opinion__text', driver).text)[0]
     # return reit, text
 
-def ozon_test(prodId, lvl=0):
-    if lvl > 10:
+def new_ozon(prodId, lvl=0):
+    
+    if lvl > 15:
         return 0, 0
 
     try:
@@ -169,10 +243,14 @@ def ozon_test(prodId, lvl=0):
         reit = wait_by_Xpath('//div[*]/div[*]/div/div[*]/div[*]/div/div[3]/div[4]/div[1]//span',
                              driver).text.split('/')[0].replace('.', ',')
         text = wait_by_Xpath('//*[@id="comments"]/div', driver).text
+        reit_star = {}
+        
+        for i in range(1,6):
+            reit_star[abs(6-i)] = wait_by_Xpath(f"//div[@data-widget='webReviewProductScore']/div/div/div[2]/div[{i}]/div[3]",driver).text
 
         driver.close()
         
-        return reit, text
+        return reit, text , reit_star
     
     except Exception as e:
         
@@ -182,10 +260,12 @@ def ozon_test(prodId, lvl=0):
             
             print(e)
             
-        return ozon_test(prodId, lvl+1)
+        return new_ozon(prodId, lvl+1)
     
 
 if __name__ == '__main__':
-    Id = '547464242'
+    Id = '242969350'
     # print(wb(Id))
     # print(ozon(Id))
+    # wb_test(1)
+    print(new_ozon(Id))
