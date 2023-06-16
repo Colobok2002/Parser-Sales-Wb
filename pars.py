@@ -18,11 +18,11 @@ import os
 
 server, wisual = False, False
 ROFILE = "main"
-wind = False
+wind = True
 
-DEBYG = True
+DEBYG = False
+
 use_acc = False
-
 PHONE = "9196602851"
 
 if not DEBYG:

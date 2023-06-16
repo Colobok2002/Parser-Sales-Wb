@@ -677,7 +677,7 @@ def main() -> None:
     print(f"Программа запущена в 23:55 по МСК {date}")
 
     add_data_wb(table, date)
-    # add_data_ozon(table,date)
+    add_data_ozon(table,date)
     print('[+] Finished')
 
 
