@@ -1,5 +1,4 @@
 from random import randint
-import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -15,15 +14,12 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 import re
 import os
 
-
-server, wisual = False, False
-ROFILE = "main"
-wind = True
-
-DEBYG = False
-
-use_acc = False
-PHONE = "9196602851"
+# CONSTS
+server, wisual = False, False # Где запушена программа на сервере или пк , отображать окна браузера или нет
+ROFILE = "main" # Профиль для браузера
+wind = True # Используется винда или linux
+DEBYG = False # Режем отладки
+PHONE = "9196602851" # Номер телефона для авторизации на WB
 
 if not DEBYG:
     server, wisual = False, True
@@ -75,7 +71,7 @@ def add_profile(name):
     
     wait_by_class('login__btn',driver).click()
     
-    kod = input("введите при завершении")
+    input("Введите Entr при успешной авторизации")
     
     print("[+] Profile create suksesful")
 
@@ -83,8 +79,6 @@ def add_profile(name):
 
 
 def selekt_profile(name):
-
-    # print("[+] selekt profiles start")
 
     options = webdriver.ChromeOptions()
 
@@ -109,57 +103,7 @@ def selekt_profile(name):
     driver = webdriver.Chrome(service=ChromeService(
             ChromeDriverManager().install()), options=options)
 
-    # driver.set_window_size(900,1300)
-
-    # print("[+] selekt profiles suksesful")
-
     return driver
-
-def wb(prodId, lvl=0):
-
-    options = Options()
-
-    if server:
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
-
-    if not wisual:
-        options.add_argument('--headless=new')
-        options.add_argument('--disable-gpu')
-
-    options.add_argument("--window-size=1200,2000")
-
-    driver = selekt_profile(ROFILE)
-
-    if lvl > 3:
-        
-        return 0, 0
-    
-    try:
-        
-        driver.get(
-            f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
-
-        driver.execute_script(
-            "arguments[0].scrollIntoView();", wait_by_class('details-section', driver))
-        
-        reit = wait_by_class('user-opinion__rating-numb',
-                             driver).text.replace('.', ',')
-        
-        col = re.findall(
-            r'\d+', wait_by_class('user-opinion__text', driver).text)[0]
-
-        return reit, col
-    
-    except Exception as e:
-        
-        driver.close()
-        
-        if DEBYG:
-            
-            print(e)
-            
-        return wb(prodId, lvl+1)
 
 
 def new_wb(prodId, lvl=0):
@@ -239,59 +183,20 @@ def new_wb(prodId, lvl=0):
             
         return new_wb(prodId, lvl+1)
 
-
-def ozon(prodId, lvl=0):
-
-    if lvl > 7:
-        return 0, 0 ,{"5":0,"4":0,"3":0,"2":0,"1":0},{'nov':0,'old':0,'delt':0}
-
-    try:
-        options = Options()
-        # options.add_argument('--headless=new')
-        
-        if server:
-            options.add_argument('--headless=new')
-            options.add_argument('--no-sandbox')
-
-        if not wisual:
-            options.add_argument('--headless=new')
-            options.add_argument('--disable-gpu')
-
-        options.add_argument("--window-size=1600,1000")
-
-        # options.add_experimental_option("prefs", {"profiles.default_content_setting_values.notifications" : 2})
-        # options.add_argument("--allow-profiles-outside-user-dir")
-
-        # if server:
-        #     options.add_argument(f"user-data-dir={os.getcwd()}/profiles/main")
-        # else:
-        #     options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\main")
-            
-        driver = webdriver.Chrome(service=ChromeService(
-            ChromeDriverManager().install()), options=options)
-
-        driver.get(
-            f'https://www.ozon.ru/product/{prodId}/reviews/')
-        
-        reit = wait_by_Xpath('//div[*]/div[*]/div/div[*]/div[*]/div/div[3]/div[4]/div[1]//span',
-                             driver).text.split('/')[0].replace('.', ',')
-        text = wait_by_Xpath('//*[@id="comments"]/div', driver).text
-
-        return reit, text
-    except Exception as e:
-        driver.close()
-        if DEBYG:
-            print(e)
-        return ozon(prodId, lvl+1)
-
-    # driver.execute_script(
-    #     "arguments[0].scrollIntoView();", wait_by_class('details-section', driver))
-    # reit = wait_by_class('user-opinion__rating-numb', driver).text
-    # text = re.findall(
-    #     r'\d+', wait_by_class('user-opinion__text', driver).text)[0]
-    # return reit, text
-
 def new_ozon(prodId, lvl=0):
+    """new_ozon данные с Ozon
+
+    рейтинг:float ; 
+    колличество отзывов:int ; 
+    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов'); 
+
+    Args:
+        prodId (_type_): артикул ozon
+        lvl (int, optional): уровень вложености. Defaults to 0.
+
+    Returns:
+        _type_: _description_
+    """
     
     if lvl > 7:
         return 0, 0 ,{"5":0,"4":0,"3":0,"2":0,"1":0}
