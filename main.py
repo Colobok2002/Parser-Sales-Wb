@@ -1,7 +1,7 @@
 import httplib2
 import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
-from pars import new_wb, new_ozon, DEBYG
+from pars import new_ozon, DEBYG, wb
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 
@@ -282,7 +282,7 @@ class GoogleSheets:
             return {'status': False, 'error': str(e)}
 
 
-def add_data_wb(table, date) -> None:
+def add_data_wb(table, date, date_now) -> None:
     """add_data_wb Данные с WB
 
     Получает и записывает даннные с WB и записывает в таблицу
@@ -349,8 +349,8 @@ def add_data_wb(table, date) -> None:
                 reit, colvo_rev, reit_star, prisi = 0, 0, {
                     "5": 0, "4": 0, "3": 0, "2": 0, "1": 0}, {'nov': 0, 'old': 0, 'delt': 0}
             else:
-                reit, colvo_rev, reit_star, prisi = new_wb(
-                    data[i]['WB']['value'])
+                reit, colvo_rev, reit_star, prisi = wb(
+                    data[i]['WB']['value'], date=date_now)
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Рейтинг']['column']+15)
@@ -601,8 +601,10 @@ def add_data_ozon(table, date) -> None:
 def main() -> None:
     table = '1fhnBbPLb8CKzJ5etlQ19zwoTTyV697p3L_8I5yi4dEU'
     date = datetime.now().strftime('%d.%m.%y')
+    date_now = datetime.now()
     print(f"Программа запущена в 23:55 по МСК {date}")
-    add_data_wb(table, date)
+
+    add_data_wb(table, date, date_now)
     add_data_ozon(table, date)
     print('[+] Finished')
 
