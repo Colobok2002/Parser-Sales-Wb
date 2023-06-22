@@ -120,6 +120,47 @@ def chek_date(date, date_two):
     return False
 
 
+def get_prise_wb(prodId, lvl=0, date=datetime.now()):
+    
+    if lvl >= 4:
+        return {'nov': 0, 'old': 0, 'delt': 0}
+    
+    try:
+        prise = {'nov': 0, 'old': 0, 'delt': 0}
+        options = Options()
+
+        if server:
+            options.add_argument('--headless=new')
+            options.add_argument('--no-sandbox')
+        if not wisual:
+            options.add_argument('--headless=new')
+            options.add_argument('--disable-gpu')
+        options.add_argument("--window-size=1200,2000")
+
+        driver = selekt_profile(PROFILE)
+
+        driver.get(
+            f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
+        nov = wait_by_class('price-block__final-price',
+                            driver).text.replace('₽', '').replace(' ', '')
+        old = wait_by_class('price-block__old-price',
+                            driver).text.replace('₽', '').replace(' ', '')
+        prise['nov'] = nov
+        prise['old'] = old
+        prise['delt'] = str(
+            round((int(prise['nov'])/int(prise['old']))*100, 0)).split('.')[0]
+
+        driver.close()
+        
+        return prise
+
+    except:
+
+        driver.close()
+            
+        return get_prise_wb(prodId, lvl+1, date)
+
+
 def new_wb(prodId, lvl=0):
     """new_wb парсинг с wb
 
@@ -320,42 +361,9 @@ def wb(prodId, lvl=0, date=datetime.now()):
                 reit_star[f"{i['productValuation']}"] += 1
                 prise = {'nov': 0, 'old': 0, 'delt': 0}
 
-        prise = {'nov': 0, 'old': 0, 'delt': 0}
-
-        try:
-
-            options = Options()
-
-            if server:
-                options.add_argument('--headless=new')
-                options.add_argument('--no-sandbox')
-            if not wisual:
-                options.add_argument('--headless=new')
-                options.add_argument('--disable-gpu')
-            options.add_argument("--window-size=1200,2000")
-
-            driver = selekt_profile(PROFILE)
-
-            driver.get(
-                f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
-            nov = wait_by_class('price-block__final-price',
-                                driver).text.replace('₽', '').replace(' ', '')
-            old = wait_by_class('price-block__old-price',
-                                driver).text.replace('₽', '').replace(' ', '')
-            prise['nov'] = nov
-            prise['old'] = old
-            prise['delt'] = str(
-                round((int(prise['nov'])/int(prise['old']))*100, 0)).split('.')[0]
-
-            driver.close()
-        except:
-
-            driver.close()
-
-            if DEBYG:
-                print(e)
-
-            return wb(prodId, lvl+1, date)
+        prise = get_prise_wb(prodId, lvl+1, date)
+        
+        print(prise)
 
         return reit.replace('.', ','), col, reit_star, prise
     except Exception as e:
