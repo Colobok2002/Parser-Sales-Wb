@@ -123,10 +123,10 @@ def chek_date(date, date_two):
 def get_prise_wb(prodId, lvl=0, date=datetime.now()):
     
     if lvl >= 4:
-        return {'nov': 0, 'old': 0, 'delt': 0}
+        return {'nov': "", 'old': "", 'delt': ""}
     
     try:
-        prise = {'nov': 0, 'old': 0, 'delt': 0}
+        prise = {'nov': "", 'old': "", 'delt': ""}
         options = Options()
 
         if server:
@@ -260,8 +260,8 @@ def new_ozon(prodId, lvl=0):
         _type_: _description_
     """
 
-    if lvl > 7:
-        return 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
+    if lvl > 3:
+        return "", "", {"5": "", "4": "", "3": "", "2": "", "1": ""}
 
     try:
         options = FOptions()
@@ -292,12 +292,17 @@ def new_ozon(prodId, lvl=0):
         reit = wait_by_Xpath('//div[*]/div[*]/div/div[*]/div[*]/div/div[3]/div[4]/div[1]//span',
                              driver).text.split('/')[0].replace('.', ',')
         text = wait_by_Xpath('//*[@id="comments"]/div', driver).text
-        reit_star = {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
+        
+        reit_star = {"5": "", "4": "", "3": "", "2": "", "1": ""}
 
         for i in range(1, 6):
             reit_star[f"{abs(6-i)}"] = wait_by_Xpath(
                 f"//div[@data-widget='webReviewProductScore']/div/div/div[2]/div[{i}]/div[3]", driver).text
 
+        for i in reit_star:
+            if reit_star[i] == 0 or reit_star[i] == "0":
+                reit_star[i] = ""
+        
         driver.close()
 
         return reit, text, reit_star
@@ -331,7 +336,7 @@ def wb(prodId, lvl=0, date=datetime.now()):
 
     if lvl > 7:
 
-        return 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}, {'nov': 0, 'old': 0, 'delt': 0}
+        return "", "", {"5": "", "4": "", "3": "", "2": "", "1": ""}, {'nov': "", 'old': "", 'delt': ""}
 
     try:
 
@@ -359,11 +364,14 @@ def wb(prodId, lvl=0, date=datetime.now()):
         for i in data:
             if chek_date(i['createdDate'], date):
                 reit_star[f"{i['productValuation']}"] += 1
-                prise = {'nov': 0, 'old': 0, 'delt': 0}
-
-        prise = get_prise_wb(prodId, lvl+1, date)
+                
+        for i in reit_star:
+            if reit_star[i] == 0:
+                reit_star[i] = ""
+                
+        # prise = get_prise_wb(prodId, lvl+1, date)
+        prise = {'nov': "", 'old': "", 'delt': ""}
         
-        print(prise)
 
         return reit.replace('.', ','), col, reit_star, prise
     except Exception as e:

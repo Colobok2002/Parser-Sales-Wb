@@ -346,8 +346,8 @@ def add_data_wb(table, date, date_now) -> None:
             if DEBYG:
                 print(i)
             if data[i]['WB']['value'] == "" or "!" in data[i]['WB']['value']:
-                reit, colvo_rev, reit_star, prisi = 0, 0, {
-                    "5": 0, "4": 0, "3": 0, "2": 0, "1": 0}, {'nov': 0, 'old': 0, 'delt': 0}
+                reit, colvo_rev, reit_star, prisi = "", "", {
+                    "5": "", "4": "", "3": "", "2": "", "1": ""}, {'nov': "", 'old': "", 'delt': ""}
             else:
                 reit, colvo_rev, reit_star, prisi = wb(
                     data[i]['WB']['value'], date=date_now)
@@ -364,7 +364,7 @@ def add_data_wb(table, date, date_now) -> None:
             if col_fin:
                 col_fin = col_fin['data']
 
-            form1 = f"={col_start}{i}-{col_fin}{i}"
+            form1 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+15)
@@ -374,7 +374,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+1)
             if col_fin:
                 col_fin = col_fin['data']
-            form2 = f"={col_start}{i}-{col_fin}{i}"
+            form2 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+17)
@@ -384,7 +384,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+3)
             if col_fin:
                 col_fin = col_fin['data']
-            form3 = f"={col_start}{i}-{col_fin}{i}"
+            form3 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+19)
@@ -394,7 +394,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+5)
             if col_fin:
                 col_fin = col_fin['data']
-            form4 = f"={col_start}{i}-{col_fin}{i}"
+            form4 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+21)
@@ -404,7 +404,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+7)
             if col_fin:
                 col_fin = col_fin['data']
-            form5 = f"={col_start}{i}-{col_fin}{i}"
+            form5 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+23)
@@ -414,7 +414,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+9)
             if col_fin:
                 col_fin = col_fin['data']
-            form6 = f"={col_start}{i}-{col_fin}{i}"
+            form6 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+25)
@@ -424,7 +424,7 @@ def add_data_wb(table, date, date_now) -> None:
                 data[i]['Отзывов']['column']+11)
             if col_fin:
                 col_fin = col_fin['data']
-            form7 = f"={col_start}{i}-{col_fin}{i}"
+            form7 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             data_data.append([reit, form1, colvo_rev, form2, reit_star["5"], form3, reit_star["4"],
                              form4, reit_star["3"], form5, reit_star["2"], form6, reit_star["1"], form7])
@@ -507,8 +507,8 @@ def add_data_ozon(table, date) -> None:
             if DEBYG:
                 print(i)
             if data[i]['OZON']['value'] == "" or "!" in data[i]['OZON']['value']:
-                reit, colvo_rev, reit_star = 0, 0, {
-                    "5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
+                reit, colvo_rev, reit_star = "", "", {
+                    "5": "", "4": "", "3": "", "2": "", "1": ""}
             else:
                 reit, colvo_rev, reit_star = new_ozon(data[i]['OZON']['value'])
 
@@ -524,7 +524,7 @@ def add_data_ozon(table, date) -> None:
             if col_fin:
                 col_fin = col_fin['data']
 
-            form1 = f"={col_start}{i}-{col_fin}{i}"
+            form1 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+15)
@@ -534,7 +534,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+1)
             if col_fin:
                 col_fin = col_fin['data']
-            form2 = f"={col_start}{i}-{col_fin}{i}"
+            form2 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+17)
@@ -544,7 +544,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+3)
             if col_fin:
                 col_fin = col_fin['data']
-            form3 = f"={col_start}{i}-{col_fin}{i}"
+            form3 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+19)
@@ -554,7 +554,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+5)
             if col_fin:
                 col_fin = col_fin['data']
-            form4 = f"={col_start}{i}-{col_fin}{i}"
+            form4 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+21)
@@ -564,7 +564,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+7)
             if col_fin:
                 col_fin = col_fin['data']
-            form5 = f"={col_start}{i}-{col_fin}{i}"
+            form5 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+23)
@@ -574,7 +574,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+9)
             if col_fin:
                 col_fin = col_fin['data']
-            form6 = f"={col_start}{i}-{col_fin}{i}"
+            form6 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             col_start = apiGoogle.number_to_column(
                 data[i]['Отзывов']['column']+25)
@@ -584,7 +584,7 @@ def add_data_ozon(table, date) -> None:
                 data[i]['Отзывов']['column']+11)
             if col_fin:
                 col_fin = col_fin['data']
-            form7 = f"={col_start}{i}-{col_fin}{i}"
+            form7 = f"=ЕСЛИ({col_start}{i}-{col_fin}{i} = 0;;{col_start}{i}-{col_fin}{i})"
 
             if DEBYG:
                 print(reit_star)
@@ -601,7 +601,9 @@ def add_data_ozon(table, date) -> None:
 def main() -> None:
     table = '1fhnBbPLb8CKzJ5etlQ19zwoTTyV697p3L_8I5yi4dEU'
     date = datetime.now().strftime('%d.%m.%y')
+    # date = "22.06.2023"
     date_now = datetime.now()
+    # date_now = datetime.strptime("2023-06-22",'%Y-%m-%d')
     print(f"Программа запущена в 23:55 по МСК {date}")
 
     add_data_wb(table, date, date_now)

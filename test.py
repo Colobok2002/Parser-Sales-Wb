@@ -1,10 +1,22 @@
-from datetime import datetime
+from requests import post as p
 
-now = datetime.now()
-date_str = "2023-06-21T07:29:46Z"
-date = datetime.strptime(date_str.split('T')[0], "%Y-%m-%d")
+URL = "https://data.riche.skin/app/v1.0/import_price/"
+TOKEN = "69a3d8da962b6f596a2244e3214dd142"
 
-if date.date() == now.date():
-    print("Дата сегодняшняя")
-else:
-    print("Дата не сегодняшняя")
+
+prods = [{"marking":
+          "FC/45/EP/PMEP/100",
+          "price": 499,
+          "sale": 10,
+          "price_with_sale": 400}]
+
+# 449.00
+
+data = {
+    'token': TOKEN,
+    "items": prods
+}
+
+response = p(URL,json=data)
+
+print(response.text)
