@@ -3,7 +3,7 @@ import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
 from pars import new_ozon, DEBYG, wb
 from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime
+from datetime import datetime , timedelta
 
 
 class GoogleSheets:
@@ -600,13 +600,15 @@ def add_data_ozon(table, date) -> None:
 
 def main() -> None:
     table = '1fhnBbPLb8CKzJ5etlQ19zwoTTyV697p3L_8I5yi4dEU'
-    date = datetime.now().strftime('%d.%m.%y')
+    # date = datetime.now().strftime('%d.%m.%y')
     # date = "22.06.2023"
-    date_now = datetime.now()
+    date_now = datetime.now() - timedelta(days=1)
+    date = date_now.strftime('%d.%m.%y')
+    date_now = datetime.strptime(date_now.strftime('%Y-%m-%d'),'%Y-%m-%d')
     # date_now = datetime.strptime("2023-06-22",'%Y-%m-%d')
-    print(f"Программа запущена в 23:55 по МСК {date}")
+    print(f"Программа запущена в 16:00 по МСК {datetime.now().strftime('%d.%m.%y')}")
 
-    add_data_wb(table, date, date_now)
+    add_data_wb(table, date , date_now)
     add_data_ozon(table, date)
     print('[+] Finished')
 
@@ -639,5 +641,5 @@ if __name__ == '__main__':
     else:
         print('[+] Start')
         scheduler = BlockingScheduler()
-        scheduler.add_job(main, 'cron', hour=23, minute=55)
+        scheduler.add_job(main, 'cron', hour=16, minute=00)
         scheduler.start()

@@ -369,8 +369,8 @@ def wb(prodId, lvl=0, date=datetime.now()):
             if reit_star[i] == 0:
                 reit_star[i] = ""
                 
-        # prise = get_prise_wb(prodId, lvl+1, date)
-        prise = {'nov': "", 'old': "", 'delt': ""}
+        prise = get_prise_wb(prodId, lvl+1, date)
+        # prise = {'nov': "", 'old': "", 'delt': ""}
         
 
         return reit.replace('.', ','), col, reit_star, prise
