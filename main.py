@@ -611,13 +611,8 @@ def main() -> None:
     add_data_wb(table, date , date_now)
     add_data_ozon(table, date)
     print('[+] Finished')
-
-
-if __name__ == '__main__':
-
-    apiGoogle = GoogleSheets('productsraiting-93d7111b4c98.json')
-
-    def create_table():
+    
+def create_table(apiGoogle):
 
         table = apiGoogle.AddTable(name="Статистика маркетплейсов", properties={
                                    'sheetType': 'GRID', 'sheetId': 0, 'title': 'wb', 'gridProperties': {'rowCount': 0, 'columnCount': 0}})['spreadsheet']
@@ -632,6 +627,12 @@ if __name__ == '__main__':
 
         return table
 
+
+if __name__ == '__main__':
+
+    apiGoogle = GoogleSheets('productsraiting-93d7111b4c98.json')
+
+    
     if 1 != 1:
         create_table()
 
