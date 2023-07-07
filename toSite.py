@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from main import GoogleSheets, create_table
 from pars import new_ozon, DEBYG, wb
 import json
+from addRicheSkin import addPrise
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def _requests(**kwargs):
@@ -15,9 +17,9 @@ def _requests(**kwargs):
 
     response = requests.post(url_zap, json=kwargs.get("data", False))
 
-    print(
-        f"[{response.status_code}] {response.json() if response.status_code == 200 else 'Error'}"
-    )
+    # print(
+    #     f"[{response.status_code}] {response.json() if response.status_code == 200 else 'Error'}"
+    # )
 
     return response.json()
 
@@ -78,7 +80,9 @@ def addWbOtchet():
                 [i["art"], 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}]
             )
         else:
+
             reit, colvo_rev, reit_star, prisi = wb(i["wb"], date=date_date)
+            addPrise(i["art"], prisi["old"], prisi["delt"], prisi["nov"])
             response_data.append([i["art"], reit, colvo_rev, reit_star, prisi])
 
     requestData = {"date": f"{date_str}", "market": "wb", "othet": response_data}
@@ -90,4 +94,13 @@ def addWbOtchet():
 
 if __name__ == "__main__":
     # addProdsSite()
-    addWbOtchet()
+    if DEBYG:
+        addWbOtchet()
+
+    else:
+        print('[+] Start')
+        scheduler = BlockingScheduler()
+        scheduler.add_job(addWbOtchet, 'cron', hour=16, minute=00)
+        scheduler.start()
+
+    

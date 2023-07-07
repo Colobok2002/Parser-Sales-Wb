@@ -27,51 +27,52 @@ WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZ
 
 
 def wait_by_class(class_name, driver):
-
-    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+    return WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, class_name))
+    )
 
 
 def wait_by_Xpath(xpath, driver):
-
-    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
+    return WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, xpath))
+    )
 
 
 def wait_by_Id(id, driver):
-
     return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, id)))
 
 
 def add_profile(name):
-
     print("[+] add profiles start")
     options = webdriver.ChromeOptions()
 
     if server:
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
 
     if not wisual:
-        options.add_argument('--headless=new')
-        options.add_argument('--disable-gpu')
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
 
-    options.add_argument('--allow-profiles-outside-user-dir')
-    options.add_argument('--enable-profiles-shortcut-manager')
+    options.add_argument("--allow-profiles-outside-user-dir")
+    options.add_argument("--enable-profiles-shortcut-manager")
 
     if not wind:
         options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
     else:
         options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
 
-    options.add_argument('--profiles-directory=Default')
+    options.add_argument("--profiles-directory=Default")
 
-    driver = webdriver.Chrome(service=ChromeService(
-        ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()), options=options
+    )
 
-    driver.get('https://www.wildberries.ru/security/login')
+    driver.get("https://www.wildberries.ru/security/login")
 
-    wait_by_class('input-item', driver).send_keys(PHONE)
+    wait_by_class("input-item", driver).send_keys(PHONE)
 
-    wait_by_class('login__btn', driver).click()
+    wait_by_class("login__btn", driver).click()
 
     input("Введите Entr при успешной авторизации")
 
@@ -81,38 +82,37 @@ def add_profile(name):
 
 
 def selekt_profile(name):
-
     options = webdriver.ChromeOptions()
 
     if server:
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
 
     if not wisual:
-        options.add_argument('--headless=new')
-        options.add_argument('--disable-gpu')
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
 
-    options.add_argument('--allow-profiles-outside-user-dir')
-    options.add_argument('--enable-profiles-shortcut-manager')
+    options.add_argument("--allow-profiles-outside-user-dir")
+    options.add_argument("--enable-profiles-shortcut-manager")
 
     if not wind:
         options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
     else:
         options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
 
-    options.add_argument('--profiles-directory=Default')
+    options.add_argument("--profiles-directory=Default")
 
-    driver = webdriver.Chrome(service=ChromeService(
-        ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()), options=options
+    )
 
     return driver
 
 
 def chek_date(date, date_two):
-
     now = date_two
 
-    date = datetime.strptime(date.split('T')[0], "%Y-%m-%d")
+    date = datetime.strptime(date.split("T")[0], "%Y-%m-%d")
 
     if date.date() == now.date():
         return True
@@ -121,54 +121,64 @@ def chek_date(date, date_two):
 
 
 def get_prise_wb(prodId, lvl=0, date=datetime.now()):
-    
     if lvl >= 4:
-        return {'nov': "", 'old': "", 'delt': ""}
-    
+        return {"nov": "", "old": "", "delt": ""}
+
     try:
-        prise = {'nov': "", 'old': "", 'delt': ""}
+        prise = {"nov": "", "old": "", "delt": ""}
         options = Options()
 
         if server:
-            options.add_argument('--headless=new')
-            options.add_argument('--no-sandbox')
+            options.add_argument("--headless=new")
+            options.add_argument("--no-sandbox")
         if not wisual:
-            options.add_argument('--headless=new')
-            options.add_argument('--disable-gpu')
+            options.add_argument("--headless=new")
+            options.add_argument("--disable-gpu")
         options.add_argument("--window-size=1200,2000")
 
         driver = selekt_profile(PROFILE)
 
-        driver.get(
-            f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
-        nov = wait_by_class('price-block__final-price',
-                            driver).text.replace('₽', '').replace(' ', '')
-        old = wait_by_class('price-block__old-price',
-                            driver).text.replace('₽', '').replace(' ', '')
-        prise['nov'] = nov
-        prise['old'] = old
-        prise['delt'] = str(
-            round((int(prise['nov'])/int(prise['old']))*100, 0)).split('.')[0]
+        driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
+        nov = (
+            wait_by_class("price-block__final-price", driver)
+            .text.replace("₽", "")
+            .replace(" ", "")
+        )
+        old = (
+            wait_by_class("price-block__old-price", driver)
+            .text.replace("₽", "")
+            .replace(" ", "")
+        )
+        prise["nov"] = nov
+        prise["old"] = str(
+            (int(nov) * 100) / round((int(nov) / int(old)) * 100, 0)
+        ).split(".")[0]
+        prise["delt"] = str(round(100 - (int(nov) / int(old)) * 100, 0)).split(".")[0]
 
         driver.close()
-        
+
         return prise
 
-    except:
+    except Exception as e:
+        if DEBYG:
+            print(e)
 
-        driver.close()
-            
-        return get_prise_wb(prodId, lvl+1, date)
+        try:
+            driver.close()
+        except:
+            None
+
+        return get_prise_wb(prodId, lvl + 1, date)
 
 
 def new_wb(prodId, lvl=0):
     """new_wb парсинг с wb
 
-    Функция через селениум получает данные и взврашает 
+    Функция через селениум получает данные и взврашает
 
-    рейтинг:float ; 
-    колличество отзывов:int ; 
-    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов'); 
+    рейтинг:float ;
+    колличество отзывов:int ;
+    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов');
     цены : list ('nov текушаяя цена': 'значение','old старая цена': 'значение','delt скидка': 'значение' )
 
     Args:
@@ -179,12 +189,12 @@ def new_wb(prodId, lvl=0):
     options = Options()
 
     if server:
-        options.add_argument('--headless=new')
-        options.add_argument('--no-sandbox')
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
 
     if not wisual:
-        options.add_argument('--headless=new')
-        options.add_argument('--disable-gpu')
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
 
     options.add_argument("--window-size=1200,2000")
 
@@ -194,63 +204,91 @@ def new_wb(prodId, lvl=0):
     driver = selekt_profile(PROFILE)
 
     if lvl > 7:
-
-        return 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}, {'nov': 0, 'old': 0, 'delt': 0}
+        return (
+            0,
+            0,
+            {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0},
+            {"nov": 0, "old": 0, "delt": 0},
+        )
 
     try:
+        driver.get(f"https://www.wildberries.ru/catalog/{prodId}/feedbacks")
 
-        driver.get(
-            f'https://www.wildberries.ru/catalog/{prodId}/feedbacks')
+        reit = wait_by_class("rating-product__all-rating", driver).text.replace(
+            ".", ","
+        )
 
-        reit = wait_by_class('rating-product__all-rating',
-                             driver).text.replace('.', ',')
-
-        col = wait_by_class('rating-product__review',
-                            driver).find_element(By.TAG_NAME, "span").text.replace(' ', '')
+        col = (
+            wait_by_class("rating-product__review", driver)
+            .find_element(By.TAG_NAME, "span")
+            .text.replace(" ", "")
+        )
 
         reit_star = {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
         try:
-            for i in driver.find_elements(By.CLASS_NAME, 'feedback-percent'):
-                reit_star[i.find_element(By.CLASS_NAME, 'feedback-percent__star').text] = str(round((int(col)*int(
-                    i.find_element(By.CLASS_NAME, 'feedback-percent__count').text.replace('%', '')))/100, 0)).split('.')[0]
+            for i in driver.find_elements(By.CLASS_NAME, "feedback-percent"):
+                reit_star[
+                    i.find_element(By.CLASS_NAME, "feedback-percent__star").text
+                ] = str(
+                    round(
+                        (
+                            int(col)
+                            * int(
+                                i.find_element(
+                                    By.CLASS_NAME, "feedback-percent__count"
+                                ).text.replace("%", "")
+                            )
+                        )
+                        / 100,
+                        0,
+                    )
+                ).split(
+                    "."
+                )[
+                    0
+                ]
         except:
             None
 
-        prise = {'nov': 0, 'old': 0, 'delt': 0}
+        prise = {"nov": 0, "old": 0, "delt": 0}
 
         try:
-            driver.get(
-                f'https://www.wildberries.ru/catalog/{prodId}/detail.aspx')
-            nov = wait_by_class('price-block__final-price',
-                                driver).text.replace('₽', '').replace(' ', '')
-            old = wait_by_class('price-block__old-price',
-                                driver).text.replace('₽', '').replace(' ', '')
-            prise['nov'] = nov
-            prise['old'] = old
-            prise['delt'] = str(
-                round((int(prise['nov'])/int(prise['old']))*100, 0)).split('.')[0]
+            driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
+            nov = (
+                wait_by_class("price-block__final-price", driver)
+                .text.replace("₽", "")
+                .replace(" ", "")
+            )
+            old = (
+                wait_by_class("price-block__old-price", driver)
+                .text.replace("₽", "")
+                .replace(" ", "")
+            )
+            prise["nov"] = nov
+            prise["old"] = old
+            prise["delt"] = str(
+                round((int(prise["nov"]) / int(prise["old"])) * 100, 0)
+            ).split(".")[0]
         except:
             None
 
         return reit, col, reit_star, prise
 
     except Exception as e:
-
         driver.close()
 
         if DEBYG:
-
             print(e)
 
-        return new_wb(prodId, lvl+1)
+        return new_wb(prodId, lvl + 1)
 
 
 def new_ozon(prodId, lvl=0):
     """new_ozon данные с Ozon
 
-    рейтинг:float ; 
-    колличество отзывов:int ; 
-    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов'); 
+    рейтинг:float ;
+    колличество отзывов:int ;
+    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов');
 
     Args:
         prodId (_type_): артикул ozon
@@ -282,40 +320,45 @@ def new_ozon(prodId, lvl=0):
 
         driver = webdriver.Firefox(service=service, options=options)
 
-        driver.get(
-            f'https://www.ozon.ru/product/{prodId}/reviews/')
+        driver.get(f"https://www.ozon.ru/product/{prodId}/reviews/")
 
         wait_by_Xpath('//*[@id="comments"]/div', driver)
 
         driver.execute_script(f"window.scrollBy(0, {randint(200,300)});")
 
-        reit = wait_by_Xpath('//div[*]/div[*]/div/div[*]/div[*]/div/div[3]/div[4]/div[1]//span',
-                             driver).text.split('/')[0].replace('.', ',')
+        reit = (
+            wait_by_Xpath(
+                "//div[*]/div[*]/div/div[*]/div[*]/div/div[3]/div[4]/div[1]//span",
+                driver,
+            )
+            .text.split("/")[0]
+            .replace(".", ",")
+        )
         text = wait_by_Xpath('//*[@id="comments"]/div', driver).text
-        
+
         reit_star = {"5": "", "4": "", "3": "", "2": "", "1": ""}
 
         for i in range(1, 6):
             reit_star[f"{abs(6-i)}"] = wait_by_Xpath(
-                f"//div[@data-widget='webReviewProductScore']/div/div/div[2]/div[{i}]/div[3]", driver).text
+                f"//div[@data-widget='webReviewProductScore']/div/div/div[2]/div[{i}]/div[3]",
+                driver,
+            ).text
 
         for i in reit_star:
             if reit_star[i] == 0 or reit_star[i] == "0":
                 reit_star[i] = ""
-        
+
         driver.close()
 
         return reit, text, reit_star
 
     except Exception as e:
-
         driver.close()
 
         if DEBYG:
-
             print(e)
 
-        return new_ozon(prodId, lvl+1)
+        return new_ozon(prodId, lvl + 1)
 
 
 def wb(prodId, lvl=0, date=datetime.now()):
@@ -323,9 +366,9 @@ def wb(prodId, lvl=0, date=datetime.now()):
 
     Функция через селениум получает данные о цене и спомошью API оплучает отзывы и рейтинг
 
-    рейтинг:float ; 
-    колличество отзывов:int ; 
-    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов'); 
+    рейтинг:float ;
+    колличество отзывов:int ;
+    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов');
     цены : list ('nov текушаяя цена': 'значение','old старая цена': 'значение','delt скидка': 'значение' )
 
     Args:
@@ -335,59 +378,68 @@ def wb(prodId, lvl=0, date=datetime.now()):
     """
 
     if lvl > 7:
-
-        return "", "", {"5": "", "4": "", "3": "", "2": "", "1": ""}, {'nov': "", 'old': "", 'delt': ""}
+        return (
+            "",
+            "",
+            {"5": "", "4": "", "3": "", "2": "", "1": ""},
+            {"nov": "", "old": "", "delt": ""},
+        )
 
     try:
-
-        response = r.get(f'https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}',
-                         headers={'Authorization': WB_API})
-
+        response = r.get(
+            f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
+            headers={"Authorization": WB_API},
+        )
         while response.status_code != 200:
-            response = r.get(f'https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}',
-                             headers={'Authorization': WB_API})
+            response = r.get(
+                f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
+                headers={"Authorization": WB_API},
+            )
 
-        reit, col = response.json()['data']['valuation'], response.json()[
-            'data']['feedbacksCount']
+        reit, col = (
+            response.json()["data"]["valuation"],
+            response.json()["data"]["feedbacksCount"],
+        )
 
         reit_star = {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
 
-        response = r.get(f'https://feedbacks-api.wildberries.ru/api/v1/feedbacks/archive?skip=0&take=5000&nmId={prodId}&order=dateDesc',
-                         headers={'Authorization': WB_API})
+        response = r.get(
+            f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/archive?skip=0&take=5000&nmId={prodId}&order=dateDesc",
+            headers={"Authorization": WB_API},
+        )
 
         while response.status_code != 200:
-            response = r.get(f'https://feedbacks-api.wildberries.ru/api/v1/feedbacks/archive?skip=0&take=5000&nmId={prodId}&order=dateDesc',
-                             headers={'Authorization': WB_API})
+            response = r.get(
+                f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/archive?skip=0&take=5000&nmId={prodId}&order=dateDesc",
+                headers={"Authorization": WB_API},
+            )
 
-        data = response.json()['data']['feedbacks']
+        data = response.json()["data"]["feedbacks"]
 
         for i in data:
-            if chek_date(i['createdDate'], date):
+            if chek_date(i["createdDate"], date):
                 reit_star[f"{i['productValuation']}"] += 1
-                
+
         for i in reit_star:
             if reit_star[i] == 0:
                 reit_star[i] = ""
-                
-        prise = get_prise_wb(prodId, lvl+1, date)
+        prise = get_prise_wb(prodId, lvl, date)
         # prise = {'nov': "", 'old': "", 'delt': ""}
-        
 
-        return reit.replace('.', ','), col, reit_star, prise
+        return reit.replace(".", ","), col, reit_star, prise
     except Exception as e:
-
         if DEBYG:
             print(e)
 
-        return wb(prodId, lvl+1, date)
+        return wb(prodId, lvl + 1, date)
 
 
-if __name__ == '__main__':
-    Id = '242969350'
+if __name__ == "__main__":
+    Id = "242969350"
     # print(wb(Id))
     # print(ozon(Id))
     # wb_test(1)
     # print(new_ozon(Id))
     # print(new_wb('21358431'))
-    # add_profile(PROFILE)
-    print(wb('21358431'))
+    add_profile(PROFILE)
+    # print(wb('21358431'))
