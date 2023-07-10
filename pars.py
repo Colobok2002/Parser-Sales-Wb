@@ -20,8 +20,8 @@ from datetime import datetime
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
 server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
-wind = False  # Используется винда или linux
-DEBYG = True  # Режем отладки
+wind = True  # Используется винда или linux
+DEBYG = False  # Режем отладки
 PHONE = "9196602851"  # Номер телефона для авторизации на WB
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
 

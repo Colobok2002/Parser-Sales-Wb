@@ -105,8 +105,7 @@ def addWbOtchet():
 
 
 if __name__ == "__main__":
-
-    if 1:
+    if 1 != 1:
         addProdsSite()
     if DEBYG:
         addWbOtchet()
