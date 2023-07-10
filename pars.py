@@ -84,6 +84,9 @@ def add_profile(name):
 def selekt_profile(name):
     options = webdriver.ChromeOptions()
 
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-extensions")
+
     if server:
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
@@ -121,7 +124,7 @@ def chek_date(date, date_two):
 
 
 def get_prise_wb(prodId, lvl=0, date=datetime.now()):
-    if lvl >= 4:
+    if lvl >= 2:
         return {"nov": "", "old": "", "delt": ""}
 
     try:
@@ -160,9 +163,8 @@ def get_prise_wb(prodId, lvl=0, date=datetime.now()):
         return prise
 
     except Exception as e:
-        if DEBYG:
-            print(e)
-
+        # if DEBYG:
+        #     print(e)
         try:
             driver.close()
         except:
@@ -423,7 +425,9 @@ def wb(prodId, lvl=0, date=datetime.now()):
         for i in reit_star:
             if reit_star[i] == 0:
                 reit_star[i] = ""
+
         prise = get_prise_wb(prodId, lvl, date)
+
         # prise = {'nov': "", 'old': "", 'delt': ""}
 
         return reit.replace(".", ","), col, reit_star, prise

@@ -5,6 +5,7 @@ from pars import new_ozon, DEBYG, wb
 import json
 from addRicheSkin import addPrise
 from apscheduler.schedulers.blocking import BlockingScheduler
+from tqdm import tqdm
 
 
 def _requests(**kwargs):
@@ -34,6 +35,7 @@ def addProdsSite():
         dataOzon = dataOzon["data"]
 
     data = []
+
     for i in dataOzon:
         dataKesh = {
             "name": dataOzon[i]["Название"]["value"],
@@ -74,15 +76,24 @@ def addWbOtchet():
     date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
     date_str = date_now.date().strftime("%Y-%m-%d")
     response_data = []
-    for i in data:
+    dataPise = {}
+    for i in tqdm(data):
+        if DEBYG:
+            print(i)
         if "" == i["wb"] or "!" in i["wb"]:
             response_data.append(
                 [i["art"], 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}]
             )
         else:
-
             reit, colvo_rev, reit_star, prisi = wb(i["wb"], date=date_date)
-            addPrise(i["art"], prisi["old"], prisi["delt"], prisi["nov"])
+            if DEBYG:
+                print(prisi)
+            if prisi != {"nov": "", "old": "", "delt": ""}:
+                dataPise[i["art"]] = {
+                    "old": prisi["old"],
+                    "delt": prisi["delt"],
+                    "nov": prisi["nov"],
+                }
             response_data.append([i["art"], reit, colvo_rev, reit_star, prisi])
 
     requestData = {"date": f"{date_str}", "market": "wb", "othet": response_data}
@@ -90,17 +101,19 @@ def addWbOtchet():
         metod="addStatsProds/",
         data=requestData,
     )
+    addPrise(dataPise)
 
 
 if __name__ == "__main__":
-    # addProdsSite()
+
+    if 1:
+        addProdsSite()
     if DEBYG:
         addWbOtchet()
 
     else:
-        print('[+] Start')
+        print("[+] Start")
         scheduler = BlockingScheduler()
-        scheduler.add_job(addWbOtchet, 'cron', hour=16, minute=00)
+        scheduler.add_job(addWbOtchet, "cron", hour=16, minute=00)
         scheduler.start()
-
-    
+        print("[+] Finish")
