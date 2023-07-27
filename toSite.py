@@ -6,6 +6,7 @@ import json
 from addRicheSkin import addPrise
 from apscheduler.schedulers.blocking import BlockingScheduler
 from tqdm import tqdm
+import time
 
 
 def _requests(**kwargs):
@@ -73,7 +74,7 @@ def addProdsSite():
 
 def addWbOtchet():
     data = _requests(metod="allProds/")["art"]
-    date_now = datetime.now() - timedelta(days=2)
+    date_now = datetime.now() - timedelta(days=1)
     date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
     date_str = date_now.date().strftime("%Y-%m-%d")
     response_data = []
@@ -112,8 +113,18 @@ if __name__ == "__main__":
         addWbOtchet()
 
     else:
-        print("[+] Start")
-        scheduler = BlockingScheduler()
-        scheduler.add_job(addWbOtchet, "cron", hour=16, minute=00)
-        scheduler.start()
-        print("[+] Finish")
+        while True:
+            print("[+] Start")
+            now = datetime.now()
+            target_time = now.replace(hour=16, minute=0, second=0, microsecond=0)
+
+            if now >= target_time:
+                addWbOtchet()
+                tomorrow = now + timedelta(days=1)
+                target_time = tomorrow.replace(
+                    hour=16, minute=0, second=0, microsecond=0
+                )
+                print("[+] Finish")
+
+            time_to_wait = (target_time - now).total_seconds()
+            time.sleep(time_to_wait)
