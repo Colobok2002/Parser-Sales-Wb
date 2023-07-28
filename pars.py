@@ -1,19 +1,22 @@
-from random import randint
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from selenium.webdriver import ActionChains
+
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options as FOptions
-from selenium.webdriver.common.keys import Keys
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.service import Service as FirefoxService
+
 import os
 import requests as r
 from datetime import datetime
+from random import randint
 
 
 # CONSTS
@@ -129,19 +132,11 @@ def get_prise_wb(prodId, lvl=0, date=datetime.now()):
 
     try:
         prise = {"nov": "", "old": "", "delt": ""}
-        options = Options()
-
-        if server:
-            options.add_argument("--headless=new")
-            options.add_argument("--no-sandbox")
-        if not wisual:
-            options.add_argument("--headless=new")
-            options.add_argument("--disable-gpu")
-        options.add_argument("--window-size=1200,2000")
 
         driver = selekt_profile(PROFILE)
 
         driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
+
         nov = (
             wait_by_class("price-block__final-price", driver)
             .text.replace("₽", "")
@@ -163,126 +158,14 @@ def get_prise_wb(prodId, lvl=0, date=datetime.now()):
         return prise
 
     except Exception as e:
-        # if DEBYG:
-        #     print(e)
+        if DEBYG:
+            print(e)
         try:
             driver.close()
         except:
             None
 
         return get_prise_wb(prodId, lvl + 1, date)
-
-
-def new_wb(prodId, lvl=0):
-    """new_wb парсинг с wb
-
-    Функция через селениум получает данные и взврашает
-
-    рейтинг:float ;
-    колличество отзывов:int ;
-    количетсво отзывов по звездам : list ('рейтинг':'колличество отзывов');
-    цены : list ('nov текушаяя цена': 'значение','old старая цена': 'значение','delt скидка': 'значение' )
-
-    Args:
-        prodId (_type_): артикул wb
-        lvl (int, optional): Уровень вложености . Defaults to 0.
-
-    """
-    options = Options()
-
-    if server:
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-
-    if not wisual:
-        options.add_argument("--headless=new")
-        options.add_argument("--disable-gpu")
-
-    options.add_argument("--window-size=1200,2000")
-
-    # driver = webdriver.Chrome(service=ChromeService(
-    #     ChromeDriverManager().install()), options=options)
-
-    driver = selekt_profile(PROFILE)
-
-    if lvl > 7:
-        return (
-            0,
-            0,
-            {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0},
-            {"nov": 0, "old": 0, "delt": 0},
-        )
-
-    try:
-        driver.get(f"https://www.wildberries.ru/catalog/{prodId}/feedbacks")
-
-        reit = wait_by_class("rating-product__all-rating", driver).text.replace(
-            ".", ","
-        )
-
-        col = (
-            wait_by_class("rating-product__review", driver)
-            .find_element(By.TAG_NAME, "span")
-            .text.replace(" ", "")
-        )
-
-        reit_star = {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}
-        try:
-            for i in driver.find_elements(By.CLASS_NAME, "feedback-percent"):
-                reit_star[
-                    i.find_element(By.CLASS_NAME, "feedback-percent__star").text
-                ] = str(
-                    round(
-                        (
-                            int(col)
-                            * int(
-                                i.find_element(
-                                    By.CLASS_NAME, "feedback-percent__count"
-                                ).text.replace("%", "")
-                            )
-                        )
-                        / 100,
-                        0,
-                    )
-                ).split(
-                    "."
-                )[
-                    0
-                ]
-        except:
-            None
-
-        prise = {"nov": 0, "old": 0, "delt": 0}
-
-        try:
-            driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
-            nov = (
-                wait_by_class("price-block__final-price", driver)
-                .text.replace("₽", "")
-                .replace(" ", "")
-            )
-            old = (
-                wait_by_class("price-block__old-price", driver)
-                .text.replace("₽", "")
-                .replace(" ", "")
-            )
-            prise["nov"] = nov
-            prise["old"] = old
-            prise["delt"] = str(
-                round((int(prise["nov"]) / int(prise["old"])) * 100, 0)
-            ).split(".")[0]
-        except:
-            None
-
-        return reit, col, reit_star, prise
-
-    except Exception as e:
-        driver.close()
-
-        if DEBYG:
-            print(e)
-
-        return new_wb(prodId, lvl + 1)
 
 
 def new_ozon(prodId, lvl=0):
