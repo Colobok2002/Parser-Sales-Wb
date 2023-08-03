@@ -60,12 +60,17 @@ def add_profile(name):
     options.add_argument("--allow-profiles-outside-user-dir")
     options.add_argument("--enable-profiles-shortcut-manager")
 
-    if not wind:
-        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
-    else:
+    if wind:
         options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
+    else:
+        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
 
     options.add_argument("--profiles-directory=Default")
+
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--log-level=3")
+    options.add_argument("--silent")
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()), options=options
@@ -101,18 +106,33 @@ def selekt_profile(name):
     options.add_argument("--allow-profiles-outside-user-dir")
     options.add_argument("--enable-profiles-shortcut-manager")
 
-    if not wind:
-        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
-    else:
+    if wind:
         options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
+    else:
+        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
 
     options.add_argument("--profiles-directory=Default")
+
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--log-level=3")
+    options.add_argument("--silent")
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()), options=options
     )
 
     return driver
+
+
+def openWb():
+    driver = selekt_profile(PROFILE)
+
+    driver.get(f"https://www.wildberries.ru/")
+
+    input("Нажмите для завершения")
+
+    driver.close()
 
 
 def chek_date(date, date_two):
@@ -126,7 +146,7 @@ def chek_date(date, date_two):
     return False
 
 
-def get_prise_wb(prodId, lvl=0, date=datetime.now()):
+def get_prise_wb(prodId, lvl=0):
     if lvl >= 2:
         return {"nov": "", "old": "", "delt": ""}
 
@@ -139,14 +159,19 @@ def get_prise_wb(prodId, lvl=0, date=datetime.now()):
 
         nov = (
             wait_by_class("price-block__final-price", driver)
-            .text.replace("₽", "")
+            .get_attribute("textContent")
+            .replace("₽", "")
             .replace(" ", "")
+            .replace("\xa0", "")
         )
         old = (
             wait_by_class("price-block__old-price", driver)
-            .text.replace("₽", "")
+            .get_attribute("textContent")
+            .replace("₽", "")
             .replace(" ", "")
+            .replace("\xa0", "")
         )
+
         prise["nov"] = nov
         prise["old"] = str(
             (int(nov) * 100) / round((int(nov) / int(old)) * 100, 0)
@@ -165,7 +190,7 @@ def get_prise_wb(prodId, lvl=0, date=datetime.now()):
         except:
             None
 
-        return get_prise_wb(prodId, lvl + 1, date)
+        return get_prise_wb(prodId, lvl + 1)
 
 
 def new_ozon(prodId, lvl=0):
@@ -309,11 +334,11 @@ def wb(prodId, lvl=0, date=datetime.now()):
             if reit_star[i] == 0:
                 reit_star[i] = ""
 
-        prise = get_prise_wb(prodId, lvl, date)
+        # prise = get_prise_wb(prodId, lvl, date)
 
-        # prise = {'nov': "", 'old': "", 'delt': ""}
+        # # prise = {'nov': "", 'old': "", 'delt': ""}
 
-        return reit.replace(".", ","), col, reit_star, prise
+        return reit.replace(".", ","), col, reit_star
     except Exception as e:
         if DEBYG:
             print(e)
@@ -328,5 +353,6 @@ if __name__ == "__main__":
     # wb_test(1)
     # print(new_ozon(Id))
     # print(new_wb('21358431'))
-    add_profile(PROFILE)
+    # add_profile(PROFILE)
     # print(wb('21358431'))
+    openWb()

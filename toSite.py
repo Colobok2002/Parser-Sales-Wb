@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 from main import GoogleSheets, create_table
-from pars import new_ozon, DEBYG, wb
+from pars import DEBYG, wb, get_prise_wb
 import json
 from addRicheSkin import addPrise
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -20,9 +20,10 @@ def _requests(**kwargs):
 
     response = requests.post(url_zap, json=kwargs.get("data", False))
 
-    # print(
-    #     f"[{response.status_code}] {response.json() if response.status_code == 200 else 'Error'}"
-    # )
+    if DEBYG:
+        print(
+            f"[{response.status_code}] {response.json() if response.status_code == 200 else 'Error'}"
+        )
 
     return response.json()
 
@@ -78,8 +79,7 @@ def addWbOtchet():
     date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
     date_str = date_now.date().strftime("%Y-%m-%d")
     response_data = []
-    dataPise = {}
-    for i in tqdm(data):
+    for i in tqdm(data, desc="Рейтинг Wb"):
         if DEBYG:
             print(i)
         if "" == i["wb"] or "!" in i["wb"]:
@@ -87,30 +87,43 @@ def addWbOtchet():
                 [i["art"], 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}]
             )
         else:
-            reit, colvo_rev, reit_star, prisi = wb(i["wb"], date=date_date)
-            if DEBYG:
-                print(prisi)
-            if prisi != {"nov": "", "old": "", "delt": ""}:
-                dataPise[i["art"]] = {
-                    "old": prisi["old"],
-                    "delt": prisi["delt"],
-                    "nov": prisi["nov"],
-                }
-            response_data.append([i["art"], reit, colvo_rev, reit_star, prisi])
+            reit, colvo_rev, reit_star = wb(i["wb"], date=date_date)
+
+            response_data.append([i["art"], reit, colvo_rev, reit_star])
 
     requestData = {"date": f"{date_str}", "market": "wb", "othet": response_data}
+
     _requests(
         metod="addStatsProds/",
         data=requestData,
     )
-    addPrise(dataPise)
+    # addPrise(dataPise)
+
+
+def updatePrise():
+    responseData = _requests(metod="selektPriseProds/")
+
+    prods = responseData.get("data", False)
+
+    if prods:
+        dataPise = {}
+        for prod in tqdm(prods, desc="Цены"):
+            prise = get_prise_wb(prod["wb"])
+            if prise != {"nov": "", "old": "", "delt": ""}:
+                dataPise[prod["art"]] = {
+                    "old": prise["old"],
+                    "delt": prise["delt"],
+                    "nov": prise["nov"],
+                }
+        addPrise(dataPise)
 
 
 if __name__ == "__main__":
     if 1 != 1:
         addProdsSite()
     if DEBYG:
-        addWbOtchet()
+        # addWbOtchet()
+        updatePrise()
 
     else:
         while True:
@@ -120,6 +133,7 @@ if __name__ == "__main__":
 
             if now >= target_time:
                 addWbOtchet()
+                updatePrise()
                 tomorrow = now + timedelta(days=1)
                 target_time = tomorrow.replace(
                     hour=16, minute=0, second=0, microsecond=0
