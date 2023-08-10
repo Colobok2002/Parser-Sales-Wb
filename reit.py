@@ -11,7 +11,7 @@ def run_script():
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_script, "cron", hour=15, minute=15)
+    scheduler.add_job(run_script, "cron", hour=16, minute=00)
 
     print("[+] run script")
 
