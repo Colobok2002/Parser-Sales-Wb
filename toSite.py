@@ -7,6 +7,7 @@ from addRicheSkin import addPrise
 from apscheduler.schedulers.blocking import BlockingScheduler
 from tqdm import tqdm
 import time
+import sys
 
 
 def _requests(**kwargs):
@@ -73,16 +74,22 @@ def addProdsSite():
         create_table(apiGoogle)
 
 
-def addWbOtchet():
+def addWbOtchet(currentDate=None):
     data = _requests(metod="allProds/")["art"]
-    date_now = datetime.now() - timedelta(days=1)
-    date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
-    date_str = date_now.date().strftime("%Y-%m-%d")
+    if currentDate is None:
+        date_now = datetime.now() - timedelta(days=1)
+        date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
+        date_str = date_now.date().strftime("%Y-%m-%d")
+    else:
+        date_date = datetime.strptime(currentDate, "%Y-%m-%d")
+        date_str = currentDate
+
     response_data = []
-    for i in tqdm(data, desc="Рейтинг Wb"):
+
+    for i in tqdm(data, desc="Рейтинг Wb", file=sys.stderr):
         if DEBYG:
             print(i)
-        if "" == i["wb"] or "!" in i["wb"]:
+        if "" == i["wb"] or "!" in i["wb"] or i["wb"] == None:
             response_data.append(
                 [i["art"], 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}]
             )
@@ -91,13 +98,15 @@ def addWbOtchet():
 
             response_data.append([i["art"], reit, colvo_rev, reit_star])
 
+            if DEBYG:
+                print([i["art"], reit, colvo_rev, reit_star])
+
     requestData = {"date": f"{date_str}", "market": "wb", "othet": response_data}
 
     _requests(
         metod="addStatsProds/",
         data=requestData,
     )
-    # addPrise(dataPise)
 
 
 def updatePrise():
@@ -107,7 +116,7 @@ def updatePrise():
 
     if prods:
         dataPise = {}
-        for prod in tqdm(prods, desc="Цены"):
+        for prod in tqdm(prods, desc="Цены", file=sys.stderr):
             prise = get_prise_wb(prod["wb"])
             if prise != {"nov": "", "old": "", "delt": ""}:
                 dataPise[prod["art"]] = {
@@ -123,22 +132,15 @@ if __name__ == "__main__":
         addProdsSite()
     if DEBYG:
         # addWbOtchet()
-        updatePrise()
+        if True:
+            date = [
+                "2023-08-04",
+                "2023-08-05",
+                "2023-08-06",
+                "2023-08-07",
+            ]
+            for i in date:
+                addWbOtchet(i)
 
-    else:
-        while True:
-            print("[+] Start")
-            now = datetime.now()
-            target_time = now.replace(hour=16, minute=0, second=0, microsecond=0)
-
-            if now >= target_time:
-                addWbOtchet()
-                updatePrise()
-                tomorrow = now + timedelta(days=1)
-                target_time = tomorrow.replace(
-                    hour=16, minute=0, second=0, microsecond=0
-                )
-                print("[+] Finish")
-
-            time_to_wait = (target_time - now).total_seconds()
-            time.sleep(time_to_wait)
+        addWbOtchet()
+        # updatePrise()

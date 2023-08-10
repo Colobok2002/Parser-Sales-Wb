@@ -17,13 +17,14 @@ import os
 import requests as r
 from datetime import datetime
 from random import randint
+from time import sleep
 
 
 # CONSTS
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
 server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
-wind = True  # Используется винда или linux
+wind = False  # Используется винда или linux
 DEBYG = False  # Режем отладки
 PHONE = "9083059463"  # Номер телефона для авторизации на WB
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
@@ -82,6 +83,71 @@ def add_profile(name):
 
     wait_by_class("login__btn", driver).click()
 
+    input("Введите Entr при успешной авторизации")
+
+    print("[+] Profile create suksesful")
+
+    return driver
+
+
+def add_profile_server(name):
+    print("[+] add profiles start")
+    options = webdriver.ChromeOptions()
+
+    if server:
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+
+    if not wisual:
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
+
+    options.add_argument("--allow-profiles-outside-user-dir")
+    options.add_argument("--enable-profiles-shortcut-manager")
+
+    if wind:
+        options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
+    else:
+        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
+
+    options.add_argument("--profiles-directory=Default")
+
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--log-level=3")
+    options.add_argument("--silent")
+    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()), options=options
+    )
+
+    driver.get("https://www.wildberries.ru/security/login")
+
+    wait_by_class("input-item", driver).send_keys(PHONE)
+
+    wait_by_class("login__btn", driver).click()
+
+    try:
+        flag = True
+        wait_by_Id("smsCaptchaCode", driver)
+
+        while flag:
+            driver.save_screenshot("smsCaptcha.png")
+            code = input(
+                "Captcha code (send + if Captcha succeeded send - if sreen bad?or cheek) - "
+            )
+            if code == "+":
+                flag = False
+            elif code == "-":
+                continue
+            else:
+                wait_by_Id("smsCaptchaCode", driver).send_keys(code)
+                sleep(5)
+    except:
+        None
+
+    code = input("Введите код для авторизации - ")
+    wait_by_class("login__code", driver).send_keys(code)
     input("Введите Entr при успешной авторизации")
 
     print("[+] Profile create suksesful")
@@ -292,7 +358,6 @@ def wb(prodId, lvl=0, date=datetime.now()):
             "",
             "",
             {"5": "", "4": "", "3": "", "2": "", "1": ""},
-            {"nov": "", "old": "", "delt": ""},
         )
 
     try:
@@ -329,7 +394,6 @@ def wb(prodId, lvl=0, date=datetime.now()):
         for i in data:
             if chek_date(i["createdDate"], date):
                 reit_star[f"{i['productValuation']}"] += 1
-
         for i in reit_star:
             if reit_star[i] == 0:
                 reit_star[i] = ""
@@ -337,7 +401,8 @@ def wb(prodId, lvl=0, date=datetime.now()):
         # prise = get_prise_wb(prodId, lvl, date)
 
         # # prise = {'nov': "", 'old': "", 'delt': ""}
-
+        if DEBYG:
+            print(reit.replace(".", ","), col, reit_star)
         return reit.replace(".", ","), col, reit_star
     except Exception as e:
         if DEBYG:
@@ -355,4 +420,9 @@ if __name__ == "__main__":
     # print(new_wb('21358431'))
     # add_profile(PROFILE)
     # print(wb('21358431'))
-    openWb()
+    # if server:
+    #     add_profile_server(PROFILE)
+    # else:
+    #     openWb()
+
+    add_profile_server("test")
