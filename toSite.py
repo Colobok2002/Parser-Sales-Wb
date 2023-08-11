@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timedelta
-from main import GoogleSheets, create_table
+from Trash.main import GoogleSheets, create_table
 from pars import DEBYG, wb, get_prise_wb
 import json
 from addRicheSkin import addPrise

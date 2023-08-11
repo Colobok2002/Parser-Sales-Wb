@@ -16,7 +16,6 @@ if __name__ == "__main__":
     print("[+] run script")
 
     try:
-        run_script()
-        # scheduler.start()
+        scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         pass

@@ -18,23 +18,17 @@ import requests as r
 from datetime import datetime
 from random import randint
 from time import sleep
-import keyboard
 
 
 # CONSTS
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
-server, wisual = False, True
+server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
 wind = False  # Используется винда или linux
-DEBYG = True  # Режем отладки
+DEBYG = False  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
-
-
-def emulate_keypress(key):
-    keyboard.press_and_release(str(key))
-    sleep(0.1)  # Пауза между нажатиями
 
 
 def wait_by_class(class_name, driver):
@@ -141,16 +135,6 @@ def add_profile_server(name):
 
     wait_by_class("sign-in-page", driver).click()
     driver.find_elements(By.CLASS_NAME, "input-item")[0].click()
-
-    for key in code:
-        keyboard.send(key)
-
-    # while flag == "+":
-    #     className = input("Class Name - ")
-    #     try:
-    #     except:
-    #         print("Error")
-    #     flag = input("Flag - ")
 
     input("Введите Entr при успешной авторизации")
 
@@ -366,10 +350,6 @@ def wb(prodId, lvl=0, date=datetime.now()):
         for i in reit_star:
             if reit_star[i] == 0:
                 reit_star[i] = ""
-
-        # prise = get_prise_wb(prodId, lvl, date)
-
-        # # prise = {'nov': "", 'old': "", 'delt': ""}
         if DEBYG:
             print(reit.replace(".", ","), col, reit_star)
         return reit.replace(".", ","), col, reit_star
@@ -387,11 +367,11 @@ if __name__ == "__main__":
     # wb_test(1)
     # print(new_ozon(Id))
     # print(new_wb('21358431'))
-    # add_profile(PROFILE)
+    add_profile(PROFILE)
     # print(wb('21358431'))
     # if server:
-    add_profile_server("test1")
+    # add_profile_server("test1")
     # else:
-    # openWb()
+    openWb()
 
     # add_profile_server("test")
