@@ -25,7 +25,7 @@ from time import sleep
 server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
 wind = False  # Используется винда или linux
-DEBYG = False  # Режем отладки
+DEBYG = True  # Режем отладки
 PHONE = "9083059463"  # Номер телефона для авторизации на WB
 # PHONE = "9334115882"
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
@@ -58,6 +58,7 @@ def add_profile(name):
     if not wisual:
         options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
 
     options.add_argument("--allow-profiles-outside-user-dir")
     options.add_argument("--enable-profiles-shortcut-manager")
@@ -102,6 +103,7 @@ def add_profile_server(name):
     if not wisual:
         options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
 
     options.add_argument("--allow-profiles-outside-user-dir")
     options.add_argument("--enable-profiles-shortcut-manager")
@@ -168,7 +170,6 @@ def add_profile_server(name):
 def selekt_profile(name):
     options = webdriver.ChromeOptions()
 
-    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-extensions")
 
     if server:
@@ -178,6 +179,7 @@ def selekt_profile(name):
     if not wisual:
         options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
 
     options.add_argument("--allow-profiles-outside-user-dir")
     options.add_argument("--enable-profiles-shortcut-manager")
@@ -255,7 +257,8 @@ def get_prise_wb(prodId, lvl=0):
         prise["delt"] = str(round(100 - (int(nov) / int(old)) * 100, 0)).split(".")[0]
 
         driver.close()
-
+        if DEBYG:
+            print(prise)
         return prise
 
     except Exception as e:
