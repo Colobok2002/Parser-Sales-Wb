@@ -18,17 +18,23 @@ import requests as r
 from datetime import datetime
 from random import randint
 from time import sleep
+import keyboard
 
 
 # CONSTS
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
-server, wisual = False, False
+server, wisual = False, True
 PROFILE = "main"  # Профиль для браузера
 wind = False  # Используется винда или linux
 DEBYG = True  # Режем отладки
-PHONE = "9083059463"  # Номер телефона для авторизации на WB
-# PHONE = "9334115882"
+# PHONE = "9083059463"  # Номер телефона для авторизации на WB
+PHONE = "9534499755"
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
+
+
+def emulate_keypress(key):
+    keyboard.press_and_release(str(key))
+    sleep(0.1)  # Пауза между нажатиями
 
 
 def wait_by_class(class_name, driver):
@@ -45,126 +51,6 @@ def wait_by_Xpath(xpath, driver):
 
 def wait_by_Id(id, driver):
     return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, id)))
-
-
-def add_profile(name):
-    print("[+] add profiles start")
-    options = webdriver.ChromeOptions()
-
-    if server:
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-
-    if not wisual:
-        options.add_argument("--headless=new")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--no-sandbox")
-
-    options.add_argument("--allow-profiles-outside-user-dir")
-    options.add_argument("--enable-profiles-shortcut-manager")
-
-    if wind:
-        options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
-    else:
-        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
-
-    options.add_argument("--profiles-directory=Default")
-
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--log-level=3")
-    options.add_argument("--silent")
-    options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-    driver = webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()), options=options
-    )
-
-    driver.get("https://www.wildberries.ru/security/login")
-
-    wait_by_class("input-item", driver).send_keys(PHONE)
-
-    wait_by_class("login__btn", driver).click()
-
-    input("Введите Entr при успешной авторизации")
-
-    print("[+] Profile create suksesful")
-
-    return driver
-
-
-def add_profile_server(name):
-    print("[+] add profiles start")
-    options = webdriver.ChromeOptions()
-
-    if server:
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-
-    if not wisual:
-        options.add_argument("--headless=new")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--no-sandbox")
-
-    options.add_argument("--allow-profiles-outside-user-dir")
-    options.add_argument("--enable-profiles-shortcut-manager")
-
-    if wind:
-        options.add_argument(f"user-data-dir={os.getcwd()}\\profiles\\{name}")
-    else:
-        options.add_argument(f"user-data-dir={os.getcwd()}/profiles/{name}")
-
-    options.add_argument("--profiles-directory=Default")
-
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--log-level=3")
-    options.add_argument("--silent")
-    options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-    driver = webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()), options=options
-    )
-
-    driver.get("https://www.wildberries.ru/security/login")
-
-    wait_by_class("input-item", driver).send_keys(PHONE)
-
-    wait_by_class("login__btn", driver).click()
-
-    try:
-        flag = True
-        wait_by_Id("smsCaptchaCode", driver)
-
-        while flag:
-            driver.save_screenshot("smsCaptcha.png")
-            code = input(
-                "Captcha code (send + if Captcha succeeded send - if sreen bad?or cheek) - "
-            )
-            if code == "+":
-                flag = False
-            elif code == "-":
-                continue
-            else:
-                wait_by_Id("smsCaptchaCode", driver).send_keys(code)
-                sleep(5)
-    except:
-        None
-
-    code = input("Введите код для авторизации - ")
-    sleep(3)
-    flag = "+"
-    while flag == "+":
-        className = input("Class Name - ")
-        try:
-            wait_by_class(className, driver).send_keys(code)
-        except:
-            print("Error")
-        flag = input("Flag - ")
-
-    input("Введите Entr при успешной авторизации")
-
-    print("[+] Profile create suksesful")
-
-    return driver
 
 
 def selekt_profile(name):
@@ -199,6 +85,76 @@ def selekt_profile(name):
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()), options=options
     )
+
+    return driver
+
+
+def add_profile(name):
+    print("[+] add profiles start")
+    driver = selekt_profile(name)
+
+    driver.get("https://www.wildberries.ru/security/login")
+
+    wait_by_class("input-item", driver).send_keys(PHONE)
+
+    wait_by_class("login__btn", driver).click()
+
+    input("Введите Entr при успешной авторизации")
+
+    print("[+] Profile create suksesful")
+
+    return driver
+
+
+def add_profile_server(name):
+    print("[+] add profiles start")
+
+    driver = selekt_profile(name)
+
+    driver.get("https://www.wildberries.ru/security/login")
+
+    wait_by_class("input-item", driver).send_keys(PHONE)
+
+    wait_by_class("login__btn", driver).click()
+
+    try:
+        flag = True
+        wait_by_Id("smsCaptchaCode", driver)
+
+        while flag:
+            driver.save_screenshot("smsCaptcha.png")
+            code = input(
+                "Captcha code (send + if Captcha succeeded send - if sreen bad?or cheek) - "
+            )
+            if code == "+":
+                flag = False
+            elif code == "-":
+                continue
+            else:
+                wait_by_Id("smsCaptchaCode", driver).send_keys(code)
+                sleep(5)
+    except:
+        None
+
+    code = input("Введите код для авторизации - ")
+    wait_by_class("input-item", driver)
+
+    wait_by_class("sign-in-page", driver).click()
+    driver.find_elements(By.CLASS_NAME, "input-item")[0].click()
+
+    for key in code:
+        keyboard.send(key)
+
+    # while flag == "+":
+    #     className = input("Class Name - ")
+    #     try:
+    #     except:
+    #         print("Error")
+    #     flag = input("Flag - ")
+
+    input("Введите Entr при успешной авторизации")
+
+    print("[+] Profile create suksesful")
 
     return driver
 
@@ -434,8 +390,8 @@ if __name__ == "__main__":
     # add_profile(PROFILE)
     # print(wb('21358431'))
     # if server:
-    #     add_profile_server(PROFILE)
+    add_profile_server("test1")
     # else:
-    openWb()
+    # openWb()
 
     # add_profile_server("test")
