@@ -22,11 +22,12 @@ from time import sleep
 
 # CONSTS
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
-server, wisual = False, False
+server, wisual = False, True
 PROFILE = "main"  # Профиль для браузера
-wind = False  # Используется винда или linux
+wind = True  # Используется винда или linux
 DEBYG = False  # Режем отладки
 PHONE = "9083059463"  # Номер телефона для авторизации на WB
+# PHONE = "9334115882"
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
 
 
@@ -147,7 +148,16 @@ def add_profile_server(name):
         None
 
     code = input("Введите код для авторизации - ")
-    wait_by_class("login__code", driver).send_keys(code)
+    sleep(3)
+    flag = "+"
+    while flag == "+":
+        className = input("Class Name - ")
+        try:
+            wait_by_class(className, driver).send_keys(code)
+        except:
+            print("Error")
+        flag = input("Flag - ")
+
     input("Введите Entr при успешной авторизации")
 
     print("[+] Profile create suksesful")
