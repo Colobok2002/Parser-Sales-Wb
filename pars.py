@@ -22,9 +22,9 @@ from time import sleep
 
 # CONSTS
 # Где запушена программа на сервере или пк , отображать окна браузера или нет
-server, wisual = False, True
+server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
-wind = True  # Используется винда или linux
+wind = False  # Используется винда или linux
 DEBYG = False  # Режем отладки
 PHONE = "9083059463"  # Номер телефона для авторизации на WB
 # PHONE = "9334115882"
@@ -433,6 +433,6 @@ if __name__ == "__main__":
     # if server:
     #     add_profile_server(PROFILE)
     # else:
-    #     openWb()
+    openWb()
 
-    add_profile_server("test")
+    # add_profile_server("test")
