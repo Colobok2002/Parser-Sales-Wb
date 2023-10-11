@@ -12,7 +12,7 @@ import sys
 
 def _requests(**kwargs):
     # host = "http://127.0.0.1:8000/"
-    host = "http://app.riche.one/"
+    host = "https://app.riche.one/"
     api_url = "api/v1/"
 
     metod = kwargs.get("metod")
