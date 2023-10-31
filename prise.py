@@ -10,7 +10,6 @@ def run_script():
 
 
 if __name__ == "__main__":
-    run_script()
     scheduler = BlockingScheduler()
     scheduler.add_job(run_script, "interval", hours=3)
 

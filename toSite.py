@@ -111,7 +111,7 @@ def addWbOtchet(currentDate=None):
 
 def updatePrise():
     responseData = _requests(metod="selektPriseProds/")
-    prods = responseData.get("data", False)[0:10]
+    prods = responseData.get("data", False)
 
     if prods:
         dataPise = {}
@@ -124,7 +124,6 @@ def updatePrise():
                     "nov": prise["nov"],
                 }
 
-        print(dataPise)
         addPrise(dataPise)
 
 

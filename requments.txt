@@ -47,5 +47,5 @@ tzdata==2023.3
 tzlocal==5.0.1
 uritemplate==4.1.1
 urllib3==1.26.16
-webdriver-manager==4.0.0
+webdriver-manager==4.0.1
 wsproto==1.2.0
