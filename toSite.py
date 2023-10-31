@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timedelta
-from Trash.main import GoogleSheets, create_table
+# from Trash.main import GoogleSheets, create_table
 from pars import DEBYG, wb, get_prise_wb
 import json
 from addRicheSkin import addPrise
@@ -29,49 +29,49 @@ def _requests(**kwargs):
     return response.json()
 
 
-def addProdsSite():
-    table = "1UyxGOB1qr9LwFT5ARzA6My0_jkQbwXeI1ecb8qTxLv0"
+# def addProdsSite():
+#     table = "1UyxGOB1qr9LwFT5ARzA6My0_jkQbwXeI1ecb8qTxLv0"
 
-    apiGoogle = GoogleSheets("productsraiting-93d7111b4c98.json")
-    dataOzon = apiGoogle.GetData(table, "ozon")
+#     apiGoogle = GoogleSheets("productsraiting-93d7111b4c98.json")
+#     dataOzon = apiGoogle.GetData(table, "ozon")
 
-    if dataOzon["status"]:
-        dataOzon = dataOzon["data"]
+#     if dataOzon["status"]:
+#         dataOzon = dataOzon["data"]
 
-    data = []
+#     data = []
 
-    for i in dataOzon:
-        dataKesh = {
-            "name": dataOzon[i]["Название"]["value"],
-            "art": dataOzon[i]["Внутрений арт"]["value"],
-            "wb": "",
-            "ozon": dataOzon[i]["ozon"]["value"]
-            if "ozon" in dataOzon[i]
-            else dataOzon[i]["OZON"]["value"],
-        }
-        data.append(dataKesh)
-    _requests(data=data, metod="addStatistecsProducts/")
+#     for i in dataOzon:
+#         dataKesh = {
+#             "name": dataOzon[i]["Название"]["value"],
+#             "art": dataOzon[i]["Внутрений арт"]["value"],
+#             "wb": "",
+#             "ozon": dataOzon[i]["ozon"]["value"]
+#             if "ozon" in dataOzon[i]
+#             else dataOzon[i]["OZON"]["value"],
+#         }
+#         data.append(dataKesh)
+#     _requests(data=data, metod="addStatistecsProducts/")
 
-    dataWb = apiGoogle.GetData(table, "wb")
+#     dataWb = apiGoogle.GetData(table, "wb")
 
-    if dataWb["status"]:
-        dataWb = dataWb["data"]
+#     if dataWb["status"]:
+#         dataWb = dataWb["data"]
 
-    data = []
-    for i in dataWb:
-        dataKesh = {
-            "name": dataWb[i]["Название"]["value"],
-            "art": dataWb[i]["Внутрений арт"]["value"],
-            "wb": dataWb[i]["wb"]["value"]
-            if "wb" in dataWb[i]
-            else dataWb[i]["WB"]["value"],
-            "ozon": "",
-        }
-        data.append(dataKesh)
-    _requests(data=data, metod="addStatistecsProducts/")
+#     data = []
+#     for i in dataWb:
+#         dataKesh = {
+#             "name": dataWb[i]["Название"]["value"],
+#             "art": dataWb[i]["Внутрений арт"]["value"],
+#             "wb": dataWb[i]["wb"]["value"]
+#             if "wb" in dataWb[i]
+#             else dataWb[i]["WB"]["value"],
+#             "ozon": "",
+#         }
+#         data.append(dataKesh)
+#     _requests(data=data, metod="addStatistecsProducts/")
 
-    if 1 != 1:
-        create_table(apiGoogle)
+#     if 1 != 1:
+#         create_table(apiGoogle)
 
 
 def addWbOtchet(currentDate=None):
@@ -130,7 +130,8 @@ def updatePrise():
 
 if __name__ == "__main__":
     if 1 != 1:
-        addProdsSite()
+        # addProdsSite()
+        None
     if DEBYG:
         # addWbOtchet()
         if True:
