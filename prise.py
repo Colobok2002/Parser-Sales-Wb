@@ -10,8 +10,9 @@ def run_script():
 
 
 if __name__ == "__main__":
+    updatePrise()
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_script, "interval", hours=3)
+    scheduler.add_job(run_script, "interval", hours=1)
 
     print("[+] run script")
 

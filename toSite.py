@@ -89,7 +89,7 @@ def addWbOtchet(currentDate=None):
     for i in tqdm(data, desc="Рейтинг Wb", file=sys.stderr):
         if DEBYG:
             print(i)
-        if "" == i["wb"] or "!" in i["wb"] or i["wb"] == None:
+        if i["wb"] == None or "" == i["wb"] or "!" in i["wb"]:
             response_data.append(
                 [i["art"], 0, 0, {"5": 0, "4": 0, "3": 0, "2": 0, "1": 0}]
             )
@@ -135,10 +135,11 @@ if __name__ == "__main__":
         # addWbOtchet()
         if True:
             date = [
-                "2023-08-04",
-                "2023-08-05",
-                "2023-08-06",
-                "2023-08-07",
+                "2023-12-03",
+                "2023-12-04",
+                "2023-12-05",
+                "2023-12-06",
+                "2023-12-07",
             ]
             for i in date:
                 addWbOtchet(i)
