@@ -28,7 +28,7 @@ wind = False  # Используется винда или linux
 DEBYG = False  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
-WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
+WB_API = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMDI1djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTcxNTEyMDQxNSwiaWQiOiI5ZjMyZTAxMS1lMGEzLTQ5ZTItYTFjMC0yMzE1ZDcxYjRiMTAiLCJpaWQiOjQ5NzI0NzA2LCJvaWQiOjEzNTE2LCJzIjoxMDczNzQyMzM0LCJzaWQiOiI2NzhkYjcwZS04ZGYzLTU4NWQtOWEzNi0yMDBlYjVlODc3YTkiLCJ1aWQiOjQ5NzI0NzA2fQ.ui3whOwCa1xzG74vF7RZfPZj-3H9V986Q5CIyWg05b4wH6a4oJ9XGoQSCEz3vuL71ynFve-XnxEotz9IWmXCJQ"  # API KEY валдбересс
 
 
 def wait_by_class(class_name, driver):
