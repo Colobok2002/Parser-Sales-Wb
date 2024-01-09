@@ -25,12 +25,12 @@ from time import sleep
 server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
 wind = False  # Используется винда или linux
-DEBYG = False  # Режем отладки
+DEBYG = True  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
 WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
-
-
+# PHONE = "888"
+# WB_API = "ddddd"
 def wait_by_class(class_name, driver):
     return WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, class_name))

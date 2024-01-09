@@ -1,11 +1,12 @@
 from datetime import datetime
-from toSite import addWbOtchet
+from toSite import addWbOtchetNew
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def run_script():
     print("[{}] Running reit.py...".format(datetime.now()))
-    addWbOtchet()
+    # addWbOtchet()
+    addWbOtchetNew()
     print("[+] Finish")
 
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
     # for date in date_range:
     #     addWbOtchet(date)
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_script, "cron", hour=16, minute=00)
+    scheduler.add_job(run_script, "cron",  minute=10)
 
     print("[+] run script")
 
