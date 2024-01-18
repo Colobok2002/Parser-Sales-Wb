@@ -16,11 +16,8 @@ def _requests(**kwargs):
     # host = "https://app.riche.one/"
     # api_url = "api/v1/"
     api_url = "/"
-
     method = kwargs.get("method")
-
     url_zap = f"{host}{api_url}{method}"
-
     response = requests.get(url_zap, json=kwargs.get("data", False))
 
     if DEBYG:
@@ -41,7 +38,7 @@ def _requests_post(**kwargs):
     method = kwargs.get("method")
     url_zap = f"{host}{api_url}{method}"
     response = requests.post(url_zap, json=kwargs.get("data", False))
-    print(response.json())
+
     if DEBYG:
         print(
             f"[{response.status_code}] {response.json() if response.status_code == 200 else 'Error'}"
@@ -104,7 +101,6 @@ def addWbOtchet(currentDate=None):
     else:
         date_date = datetime.strptime(currentDate, "%Y-%m-%d")
         date_str = currentDate
-
     response_data = []
 
     for i in tqdm(data, desc="Рейтинг Wb", file=sys.stderr):
@@ -116,12 +112,9 @@ def addWbOtchet(currentDate=None):
             )
         else:
             reit, colvo_rev, reit_star = wb(i["wb"], date=date_date)
-
             response_data.append([i["art"], reit, colvo_rev, reit_star])
-
             if DEBYG:
                 print([i["art"], reit, colvo_rev, reit_star])
-
     requestData = {"date": f"{date_str}", "market": "wb", "othet": response_data}
 
     _requests(
@@ -129,19 +122,15 @@ def addWbOtchet(currentDate=None):
         data=requestData,
     )
 
-
 def addWbOtchetNew(currentDate=None):
     data = _requests(method="product/get_articles/")["data"]
-
     if currentDate is None:
         date_now = datetime.now() - timedelta(days=1)
         date_date = datetime.strptime(date_now.date().strftime("%Y-%m-%d"), "%Y-%m-%d")
         date_str = date_now.date().strftime("%d.%m.%Y")
-        print(date_str)
     else:
         date_date = datetime.strptime(currentDate, "%d.%m.%Y")
         date_str = currentDate
-
     response_data = []
 
     for i in tqdm(data, desc="Рейтинг Wb", file=sys.stderr):
@@ -151,7 +140,6 @@ def addWbOtchetNew(currentDate=None):
             response_data.append(
                 {"art":i["art"],"wb_art":"", "rating":0, "total_otzv":0, "five": 0, "four": 0, "three": 0, "two": 0, "one": 0}
             )
-            
         else:
             for x in i["wb"]:
                 if "\t" in x:
@@ -161,9 +149,6 @@ def addWbOtchetNew(currentDate=None):
                 else:
                     reit, colvo_rev, reit_star = wb(x, date=date_date)
                     response_data.append({"art":i["art"], "wb_art":x, "rating":reit, "total_otzv":colvo_rev, **reit_star})
-                    # if DEBYG:
-                    #     print([i["art"], reit, colvo_rev, reit_star])
-                    print(response_data)
 
     requestData = {"date": f"{date_str}", "market": "wb", "otchet": response_data}
 
@@ -173,22 +158,22 @@ def addWbOtchetNew(currentDate=None):
     )
 
 
-# def updatePrise():
-#     responseData = _requests(metod="selektPriseProds/")
-#     prods = responseData.get("data", False)
+def updatePrise():
+    responseData = _requests(metod="selektPriseProds/")
+    prods = responseData.get("data", False)
 
-#     if prods:
-#         dataPise = {}
-#         for prod in tqdm(prods, desc="Цены", file=sys.stderr):
-#             prise = get_prise_wb(prod["wb"])
-#             if prise != {"nov": "", "old": "", "delt": ""}:
-#                 dataPise[prod["art"]] = {
-#                     "old": prise["old"],
-#                     "delt": prise["delt"],
-#                     "nov": prise["nov"],
-#                 }
+    if prods:
+        dataPise = {}
+        for prod in tqdm(prods, desc="Цены", file=sys.stderr):
+            prise = get_prise_wb(prod["wb"])
+            if prise != {"nov": "", "old": "", "delt": ""}:
+                dataPise[prod["art"]] = {
+                    "old": prise["old"],
+                    "delt": prise["delt"],
+                    "nov": prise["nov"],
+                }
 
-#         addPrise(dataPise)
+        addPrise(dataPise)
 
 
 if __name__ == "__main__":

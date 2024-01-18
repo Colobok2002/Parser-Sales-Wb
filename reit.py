@@ -1,11 +1,11 @@
 from datetime import datetime
-from toSite import addWbOtchetNew
+from toSite import addWbOtchet, addWbOtchetNew
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def run_script():
     print("[{}] Running reit.py...".format(datetime.now()))
-    # addWbOtchet()
+    addWbOtchet()
     addWbOtchetNew()
     print("[+] Finish")
 
