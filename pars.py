@@ -28,7 +28,7 @@ wind = False  # Используется винда или linux
 DEBYG = True  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
-WB_API = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NJRCI6IjhhZDcyNzQwLWExZTMtNGIwNy04ZDVkLTE1ZjRmZTRkZGExMyJ9.9_LcPW7E-JTqxl8g3VQiDCcs-5Q4-3DCHxqtq4XelDI"  # API KEY валдбересс
+WB_API = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMDI1djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTcxNTEyMDQxNSwiaWQiOiI5ZjMyZTAxMS1lMGEzLTQ5ZTItYTFjMC0yMzE1ZDcxYjRiMTAiLCJpaWQiOjQ5NzI0NzA2LCJvaWQiOjEzNTE2LCJzIjoxMDczNzQyMzM0LCJzaWQiOiI2NzhkYjcwZS04ZGYzLTU4NWQtOWEzNi0yMDBlYjVlODc3YTkiLCJ1aWQiOjQ5NzI0NzA2fQ.ui3whOwCa1xzG74vF7RZfPZj-3H9V986Q5CIyWg05b4wH6a4oJ9XGoQSCEz3vuL71ynFve-XnxEotz9IWmXCJQ"  # API KEY валдбересс
 # PHONE = "888"
 # WB_API = "ddddd"
 def wait_by_class(class_name, driver):
@@ -349,13 +349,15 @@ def wb(prodId, lvl=0, date=datetime.now()):
                 reit_star[f"{i['productValuation']}"] += 1
         for i in reit_star:
             if reit_star[i] == 0:
-                reit_star[i] = ""
-        if DEBYG:
-            print(reit.replace(".", ","), col, reit_star)
-        return reit.replace(".", ","), col, reit_star
+                reit_star[i] = 0
+        # if DEBYG:
+
+        #     print(reit.replace(".", ","), col, reit_star)
+        reit_star=dict(zip(["five", "four", "three", "two", "one"],reit_star.values()))
+        return reit, col, reit_star
     except Exception as e:
-        if DEBYG:
-            print(e)
+        # if DEBYG:
+        #     print(e)
 
         return wb(prodId, lvl + 1, date)
 
