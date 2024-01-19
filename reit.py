@@ -5,17 +5,25 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 def run_script():
     print("[{}] Running reit.py...".format(datetime.now()))
-    addWbOtchet()
     addWbOtchetNew()
     print("[+] Finish")
 
 
 if __name__ == "__main__":
-    # date_range = ["2023-10-13", "2023-10-14", "2023-10-15", "2023-10-16"]
+    # addWbOtchetNew()
+    # date_range = [
+    #     # "2024-01-11",
+    #     # "2024-01-12",
+    #     # "2024-01-13",
+    #     # "2024-01-14",
+    #     # "2024-01-15",
+    #     # "2024-01-16",
+    #     "2024-01-18",
+    # ]
     # for date in date_range:
-    #     addWbOtchet(date)
+    #     addWbOtchetNew(date)
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_script, "cron",  minute=10)
+    scheduler.add_job(run_script, "cron", minute=10)
 
     print("[+] run script")
 

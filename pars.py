@@ -25,7 +25,7 @@ from time import sleep
 server, wisual = False, False
 PROFILE = "main"  # Профиль для браузера
 wind = False  # Используется винда или linux
-DEBYG = True  # Режем отладки
+DEBYG = False  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
 WB_API = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMDI1djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTcxNTEyMDQxNSwiaWQiOiI5ZjMyZTAxMS1lMGEzLTQ5ZTItYTFjMC0yMzE1ZDcxYjRiMTAiLCJpaWQiOjQ5NzI0NzA2LCJvaWQiOjEzNTE2LCJzIjoxMDczNzQyMzM0LCJzaWQiOiI2NzhkYjcwZS04ZGYzLTU4NWQtOWEzNi0yMDBlYjVlODc3YTkiLCJ1aWQiOjQ5NzI0NzA2fQ.ui3whOwCa1xzG74vF7RZfPZj-3H9V986Q5CIyWg05b4wH6a4oJ9XGoQSCEz3vuL71ynFve-XnxEotz9IWmXCJQ"  # API KEY валдбересс
@@ -307,17 +307,14 @@ def wb(prodId, lvl=0, date=datetime.now()):
     """
 
     if lvl > 7:
-        return (
-            "",
-            "",
-            {"5": "", "4": "", "3": "", "2": "", "1": ""},
-        )
+        return (0.0, 0, {"five": 0, "four": 0, "three": 0, "two": 0, "one": 0})
 
     try:
         response = r.get(
             f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
             headers={"Authorization": WB_API},
         )
+        
         while response.status_code != 200:
             response = r.get(
                 f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
@@ -350,14 +347,14 @@ def wb(prodId, lvl=0, date=datetime.now()):
         for i in reit_star:
             if reit_star[i] == 0:
                 reit_star[i] = 0
-        # if DEBYG:
 
-        #     print(reit.replace(".", ","), col, reit_star)
-        reit_star=dict(zip(["five", "four", "three", "two", "one"],reit_star.values()))
+        reit_star = dict(
+            zip(["five", "four", "three", "two", "one"], reit_star.values())
+        )
         return reit, col, reit_star
     except Exception as e:
-        # if DEBYG:
-        #     print(e)
+        if DEBYG:
+            print(e)
 
         return wb(prodId, lvl + 1, date)
 
