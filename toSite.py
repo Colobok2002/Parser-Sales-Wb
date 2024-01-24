@@ -12,13 +12,12 @@ import sys
 
 
 def _requests(**kwargs):
-    # host = "http://127.0.0.1:8001"
+    host = "http://127.0.0.1:8001"
     host = "https://data.riche.one"
     # api_url = "api/v1/"
     api_url = "/"
     method = kwargs.get("method")
     url_zap = f"{host}{api_url}{method}"
-
     response = requests.get(url_zap, json=kwargs.get("data", False))
 
     if DEBYG:
@@ -31,7 +30,7 @@ def _requests(**kwargs):
 
 
 def _requests_post(**kwargs):
-    # host = "http://127.0.0.1:8001"
+    host = "http://127.0.0.1:8001"
     host = "https://data.riche.one"
     # api_url = "api/v1/"
     api_url = "/"
@@ -175,7 +174,6 @@ def addWbOtchetNew(currentDate=None):
                     )
                 else:
                     reit, colvo_rev, reit_star = wb(x, date=date_date)
-                    print(reit_star)
                     response_data.append(
                         {
                             "art": i["art"],
@@ -185,7 +183,6 @@ def addWbOtchetNew(currentDate=None):
                             **reit_star,
                         }
                     )
-        # break
     requestData = {"date": f"{date_str}", "market": "wb", "otchet": response_data}
 
     _requests_post(
@@ -195,24 +192,25 @@ def addWbOtchetNew(currentDate=None):
 
 
 def updatePrise():
-    responseData = _requests(metod="selektPriseProds/")
+    responseData = _requests(method="chem/get_products_wb_art/")
     prods = responseData.get("data", False)
 
     if prods:
         dataPise = {}
         for prod in tqdm(prods, desc="Цены", file=sys.stderr):
-            prise = get_prise_wb(prod["wb"])
+            prise = get_prise_wb(prod)
             if prise != {"nov": "", "old": "", "delt": ""}:
-                dataPise[prod["art"]] = {
+                dataPise[prods[prod]] = {
                     "old": prise["old"],
                     "delt": prise["delt"],
                     "nov": prise["nov"],
                 }
-
+        print(dataPise)
         addPrise(dataPise)
 
 
 if __name__ == "__main__":
+    updatePrise()
     if 1 != 1:
         # addProdsSite()
         None
