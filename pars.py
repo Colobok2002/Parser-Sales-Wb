@@ -166,16 +166,16 @@ def chek_date(date, date_two):
 
 def get_prise_wb(prodId, lvl=0):
     if lvl >= 2:
-        return {"nov": "", "old": "", "delt": ""}
+        return {"new": "", "old": "", "delt": ""}
 
     try:
-        prise = {"nov": "", "old": "", "delt": ""}
+        prise = {"new": "", "old": "", "delt": ""}
 
         driver = selekt_profile(PROFILE)
 
         driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
-
-        nov = (
+    
+        new = (
             wait_by_class("price-block__final-price", driver)
             .get_attribute("textContent")
             .replace("₽", "")
@@ -189,12 +189,15 @@ def get_prise_wb(prodId, lvl=0):
             .replace(" ", "")
             .replace("\xa0", "")
         )
+        
 
-        prise["nov"] = nov
+        prise["new"] = new
+
         prise["old"] = str(
-            (int(nov) * 100) / round((int(nov) / int(old)) * 100, 0)
+            (int(new) * 100) / round((int(new) / int(old)) * 100, 0)
         ).split(".")[0]
-        prise["delt"] = str(round(100 - (int(nov) / int(old)) * 100, 0)).split(".")[0]
+        
+        prise["delt"] = str(round(100 - (int(new) / int(old)) * 100, 0)).split(".")[0]
 
         driver.close()
         if DEBYG:

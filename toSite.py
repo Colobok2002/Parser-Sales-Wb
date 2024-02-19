@@ -46,49 +46,53 @@ def _requests_post(**kwargs):
     return response.json()
 
 
-def addProdsSite():
-    table = "1UyxGOB1qr9LwFT5ARzA6My0_jkQbwXeI1ecb8qTxLv0"
+# def addProdsSite():
+#     table = "1UyxGOB1qr9LwFT5ARzA6My0_jkQbwXeI1ecb8qTxLv0"
 
-    apiGoogle = GoogleSheets("productsraiting-93d7111b4c98.json")
-    dataOzon = apiGoogle.GetData(table, "ozon")
+#     apiGoogle = GoogleSheets("productsraiting-93d7111b4c98.json")
+#     dataOzon = apiGoogle.GetData(table, "ozon")
 
-    if dataOzon["status"]:
-        dataOzon = dataOzon["data"]
+#     if dataOzon["status"]:
+#         dataOzon = dataOzon["data"]
 
-    data = []
+#     data = []
 
-    for i in dataOzon:
-        dataKesh = {
-            "name": dataOzon[i]["Название"]["value"],
-            "art": dataOzon[i]["Внутрений арт"]["value"],
-            "wb": "",
-            "ozon": dataOzon[i]["ozon"]["value"]
-            if "ozon" in dataOzon[i]
-            else dataOzon[i]["OZON"]["value"],
-        }
-        data.append(dataKesh)
-    _requests(data=data, metod="addStatistecsProducts/")
+#     for i in dataOzon:
+#         dataKesh = {
+#             "name": dataOzon[i]["Название"]["value"],
+#             "art": dataOzon[i]["Внутрений арт"]["value"],
+#             "wb": "",
+#             "ozon": (
+#                 dataOzon[i]["ozon"]["value"]
+#                 if "ozon" in dataOzon[i]
+#                 else dataOzon[i]["OZON"]["value"]
+#             ),
+#         }
+#         data.append(dataKesh)
+#     _requests(data=data, metod="addStatistecsProducts/")
 
-    dataWb = apiGoogle.GetData(table, "wb")
+#     dataWb = apiGoogle.GetData(table, "wb")
 
-    if dataWb["status"]:
-        dataWb = dataWb["data"]
+#     if dataWb["status"]:
+#         dataWb = dataWb["data"]
 
-    data = []
-    for i in dataWb:
-        dataKesh = {
-            "name": dataWb[i]["Название"]["value"],
-            "art": dataWb[i]["Внутрений арт"]["value"],
-            "wb": dataWb[i]["wb"]["value"]
-            if "wb" in dataWb[i]
-            else dataWb[i]["WB"]["value"],
-            "ozon": "",
-        }
-        data.append(dataKesh)
-    _requests(data=data, metod="addStatistecsProducts/")
+#     data = []
+#     for i in dataWb:
+#         dataKesh = {
+#             "name": dataWb[i]["Название"]["value"],
+#             "art": dataWb[i]["Внутрений арт"]["value"],
+#             "wb": (
+#                 dataWb[i]["wb"]["value"]
+#                 if "wb" in dataWb[i]
+#                 else dataWb[i]["WB"]["value"]
+#             ),
+#             "ozon": "",
+#         }
+#         data.append(dataKesh)
+#     _requests(data=data, metod="addStatistecsProducts/")
 
-    if 1 != 1:
-        create_table(apiGoogle)
+#     if 1 != 1:
+#         create_table(apiGoogle)
 
 
 def addWbOtchet(currentDate=None):
@@ -193,39 +197,94 @@ def addWbOtchetNew(currentDate=None):
 
 def updatePrise():
     responseData = _requests(method="chem/get_products_wb_art/")
+
     prods = responseData.get("data", False)
 
     if prods:
         dataPise = {}
         for prod in tqdm(prods, desc="Цены", file=sys.stderr):
             prise = get_prise_wb(prod)
-            if prise != {"nov": "", "old": "", "delt": ""}:
+            if prise != {"new": "", "old": "", "delt": ""}:
                 dataPise[prods[prod]] = {
                     "old": prise["old"],
                     "delt": prise["delt"],
-                    "nov": prise["nov"],
+                    "new": prise["new"],
                 }
-        print(dataPise)
+        #         break
+        # print(dataPise)
         addPrise(dataPise)
 
 
-if __name__ == "__main__":
-    updatePrise()
-    if 1 != 1:
-        # addProdsSite()
-        None
-    if DEBYG:
-        addWbOtchetNew()
-        if True:
-            date = [
-                "2023-12-03",
-                "2023-12-04",
-                "2023-12-05",
-                "2023-12-06",
-                "2023-12-07",
-            ]
-            # for i in date:
-            # addWbOtchet(i)
+def calculate_price(*product_prices):
+    return round(sum(product_prices) * 0.95, 2)  # Применяем скидку 5%
 
-        # addWbOtchet()
-        # updatePrise()
+
+def updatePriseNabor():
+    import requests
+    import xml.etree.ElementTree as ET
+
+    url = "https://data.riche.skin/rcrm/"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        xml_content = response.content
+    else:
+        print("Ошибка при получении данных:", response.status_code)
+        return False
+
+    root = ET.fromstring(xml_content).find("shop").find("offers")
+    kits = {}
+
+    responseData = _requests(method="chem/get_products_wb_art/")
+    prods = responseData.get("data", {}).values()
+
+    for offer in root.findall("offer"):
+        product_type = offer.find('param[@name="Тип продукта"]').text
+        if product_type == "Комплект":
+            set_contents = [
+                set_content.text
+                for set_content in offer.findall('param[@name="Состав комплекта"]')
+            ]
+            set_prices = []
+            for xmlId in set_contents:
+                for item in root.findall(f'.//offer[xmlId="{xmlId}"]'):
+                    product_price_elem = item.find("price")
+                    if product_price_elem is not None:
+                        product_price = float(product_price_elem.text)
+                        set_prices.append(product_price)
+
+            new_price = calculate_price(*set_prices)
+
+            # price = offer.find("purchasePrice").text
+
+            if not offer.find('param[@name="Артикул"]').text in prods:
+                kits[offer.find('param[@name="Артикул"]').text] = {
+                    "old": new_price, 
+                    "delt": 0,
+                    "new": new_price,
+                }
+
+    addPrise(kits)
+
+if __name__ == "__main__":
+    updatePriseNabor()
+    # updatePrise()
+    # updatePrise()
+    # if 1 != 1:
+    #     # addProdsSite()
+    #     None
+    # if DEBYG:
+    #     addWbOtchetNew()
+    #     if True:
+    #         date = [
+    #             "2023-12-03",
+    #             "2023-12-04",
+    #             "2023-12-05",
+    #             "2023-12-06",
+    #             "2023-12-07",
+    #         ]
+    #         # for i in date:
+    #         # addWbOtchet(i)
+
+    #     # addWbOtchet()
+    #     # updatePrise()

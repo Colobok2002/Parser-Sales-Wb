@@ -1,16 +1,19 @@
 from datetime import datetime
-from toSite import updatePrise
+from toSite import updatePrise, updatePriseNabor
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def run_script():
-    print("[{}] Running prise.py...".format(datetime.now()))
+    print("[{}] Running updatePrise...".format(datetime.now()))
     updatePrise()
+    print("[+] Finish")
+    print("[{}] Running updatePriseNabor...".format(datetime.now()))
+    updatePriseNabor()
     print("[+] Finish")
 
 
 if __name__ == "__main__":
-    updatePrise()
+    run_script()
     scheduler = BlockingScheduler()
     scheduler.add_job(run_script, "interval", hours=1)
 

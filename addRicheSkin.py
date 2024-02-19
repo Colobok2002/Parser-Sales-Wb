@@ -16,7 +16,7 @@ def addPrise(dataPiche):
                 "marking": prod,
                 "price": dataPiche[prod]["old"],
                 "sale": dataPiche[prod]["delt"],
-                "price_with_sale": dataPiche[prod]["nov"],
+                "price_with_sale": dataPiche[prod]["new"],
             }
         )
     if DEBYG:
