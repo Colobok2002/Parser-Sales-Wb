@@ -14,11 +14,13 @@ import sys
 def _requests(**kwargs):
     host = "http://127.0.0.1:8001"
     host = "https://data.riche.one"
+
     # api_url = "api/v1/"
+    headers = {"HeaderApiKey":"Y2o2LxHtk1Rq4Ntj1kh7N1Ki86Fh25cgfFeRuu5z6t6JwWNQ7m"}
     api_url = "/"
     method = kwargs.get("method")
     url_zap = f"{host}{api_url}{method}"
-    response = requests.get(url_zap, json=kwargs.get("data", False))
+    response = requests.get(url_zap, json=kwargs.get("data", False),headers=headers)
 
     if DEBYG:
         print(
@@ -34,9 +36,10 @@ def _requests_post(**kwargs):
     host = "https://data.riche.one"
     # api_url = "api/v1/"
     api_url = "/"
+    headers = {"HeaderApiKey":"Y2o2LxHtk1Rq4Ntj1kh7N1Ki86Fh25cgfFeRuu5z6t6JwWNQ7m"}
     method = kwargs.get("method")
     url_zap = f"{host}{api_url}{method}"
-    response = requests.post(url_zap, json=kwargs.get("data", False))
+    response = requests.post(url_zap, json=kwargs.get("data", False),headers=headers)
 
     if DEBYG:
         print(
@@ -203,6 +206,8 @@ def updatePrise():
     if prods:
         dataPise = {}
         for prod in tqdm(prods, desc="Цены", file=sys.stderr):
+            if DEBYG:
+                print(prod)
             prise = get_prise_wb(prod)
             if prise != {"new": "", "old": "", "delt": ""}:
                 dataPise[prods[prod]] = {
@@ -210,8 +215,6 @@ def updatePrise():
                     "delt": prise["delt"],
                     "new": prise["new"],
                 }
-        #         break
-        # print(dataPise)
         addPrise(dataPise)
 
 
@@ -267,7 +270,8 @@ def updatePriseNabor():
     addPrise(kits)
 
 if __name__ == "__main__":
-    updatePriseNabor()
+    updatePrise()
+    # updatePriseNabor()
     # updatePrise()
     # updatePrise()
     # if 1 != 1:
