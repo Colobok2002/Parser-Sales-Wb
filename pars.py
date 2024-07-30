@@ -28,7 +28,7 @@ wind = False  # Используется винда или linux
 DEBYG = False  # Режем отладки
 # PHONE = "9083059463"  # Номер телефона для авторизации на WB
 PHONE = "9534499755"
-WB_API = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjMxMDI1djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTcxNTEyMDQxNSwiaWQiOiI5ZjMyZTAxMS1lMGEzLTQ5ZTItYTFjMC0yMzE1ZDcxYjRiMTAiLCJpaWQiOjQ5NzI0NzA2LCJvaWQiOjEzNTE2LCJzIjoxMDczNzQyMzM0LCJzaWQiOiI2NzhkYjcwZS04ZGYzLTU4NWQtOWEzNi0yMDBlYjVlODc3YTkiLCJ1aWQiOjQ5NzI0NzA2fQ.ui3whOwCa1xzG74vF7RZfPZj-3H9V986Q5CIyWg05b4wH6a4oJ9XGoQSCEz3vuL71ynFve-XnxEotz9IWmXCJQ"  # API KEY валдбересс
+WB_API = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjQwNTA2djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTczMTM2MzU2MywiaWQiOiJhMmY3MzJhMS1lZTBlLTQ4YjAtODc2NC1mMzg0N2YyMGVhNTciLCJpaWQiOjQ5NzI0NzA2LCJvaWQiOjEzNTE2LCJzIjoxMDIyLCJzaWQiOiI2NzhkYjcwZS04ZGYzLTU4NWQtOWEzNi0yMDBlYjVlODc3YTkiLCJ0IjpmYWxzZSwidWlkIjo0OTcyNDcwNn0.usa09Otzr_d5E3bmRxeK9hr8JKOK30zstUJ7JMwO3ldsXg8R5zV9mrnGPrYCRsHminKK-lYUfosZYMdOsAlqzA"  # API KEY валдбересс
 
 
 def wait_by_class(class_name, driver):
@@ -174,7 +174,7 @@ def get_prise_wb(prodId, lvl=0):
         driver = selekt_profile(PROFILE)
 
         driver.get(f"https://www.wildberries.ru/catalog/{prodId}/detail.aspx")
-    
+
         new = (
             wait_by_class("price-block__final-price", driver)
             .get_attribute("textContent")
@@ -189,14 +189,13 @@ def get_prise_wb(prodId, lvl=0):
             .replace(" ", "")
             .replace("\xa0", "")
         )
-        
 
         prise["new"] = new
 
         prise["old"] = str(
             (int(new) * 100) / round((int(new) / int(old)) * 100, 0)
         ).split(".")[0]
-        
+
         prise["delt"] = str(round(100 - (int(new) / int(old)) * 100, 0)).split(".")[0]
 
         driver.close()
@@ -317,7 +316,7 @@ def wb(prodId, lvl=0, date=datetime.now()):
             f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
             headers={"Authorization": WB_API},
         )
-        
+
         while response.status_code != 200:
             response = r.get(
                 f"https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId={prodId}",
