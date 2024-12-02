@@ -1,14 +1,15 @@
 from datetime import datetime
-from toSite import updatePrise, updatePriseNabor
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+from toGoogle import ParserManager
 
-def run_script():
-    print("[{}] Running updatePrise...".format(datetime.now()))
-    updatePrise()
-    print("[+] Finish")
-    print("[{}] Running updatePriseNabor...".format(datetime.now()))
-    updatePriseNabor()
+
+def run_script() -> None:
+    """Запуск парсинка"""
+    pm = ParserManager()
+    print(f"[{datetime.now()}] Running updatePrise...")
+    pm.updatePrise()
     print("[+] Finish")
 
 
@@ -17,7 +18,7 @@ if __name__ == "__main__":
     scheduler = BlockingScheduler()
     scheduler.add_job(run_script, "interval", hours=1)
 
-    print("[+] run script")
+    print("[+] Запустился планировшик")
 
     try:
         scheduler.start()
