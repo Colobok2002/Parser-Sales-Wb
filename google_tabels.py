@@ -31,10 +31,10 @@ class GoogleTabelManager:
         self.wks_prices.clear()
 
         self.wks_prices.update_acell("A1", "Ссылка")
-        self.wks_prices.update_acell("B1", "Название")
-        self.wks_prices.update_acell("C1", "Цена со скидкой")
-        self.wks_prices.update_acell("D1", "Цена без скидки")
-        self.wks_prices.update_acell("E1", "Скидка %")
+        # self.wks_prices.update_acell("B1", "Название")
+        self.wks_prices.update_acell("B1", "Цена со скидкой")
+        self.wks_prices.update_acell("C1", "Цена без скидки")
+        self.wks_prices.update_acell("D1", "Скидка %")
 
         for idx, (url, data) in enumerate(product_data.items(), start=1):
             name = data.get("name", "")
@@ -44,10 +44,10 @@ class GoogleTabelManager:
 
             if url:
                 self.wks_prices.update_acell(f"A{idx + 1}", url)
-                self.wks_prices.update_acell(f"B{idx + 1}", name)
-                self.wks_prices.update_acell(f"C{idx + 1}", price)
-                self.wks_prices.update_acell(f"D{idx + 1}", price_old)
-                self.wks_prices.update_acell(f"E{idx + 1}", delt)
+                # self.wks_prices.update_acell(f"B{idx + 1}", name)
+                self.wks_prices.update_acell(f"B{idx + 1}", price)
+                self.wks_prices.update_acell(f"C{idx + 1}", price_old)
+                self.wks_prices.update_acell(f"D{idx + 1}", delt)
 
         return True
 

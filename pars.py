@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager as ChromeDriverManagerB
 
 # CONSTS
 
-wisual = True  # Отображать окна браузера или нет
+wisual = False  # Отображать окна браузера или нет
 PROFILE = "main"  # Профиль для браузера
 DEBYG = False  # Режем отладки
 PHONE = "..."
@@ -134,7 +134,7 @@ class ChromeDriverManager:
                 self.wait_by_class("price-block__final-price", driver)
                 .get_attribute("textContent")
                 .replace("₽", "")
-                .rplace(" ", "")
+                .replace(" ", "")
                 .replace("\xa0", "")
             )
             old = (
