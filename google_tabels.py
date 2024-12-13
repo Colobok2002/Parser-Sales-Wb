@@ -20,7 +20,7 @@ class GoogleTabelManager:
     def get_prods(self) -> list[str]:
         """Получает все валидные ссылки на продукты из Google Sheets"""
         all_urls = self.wks_products.col_values(1)
-        pattern = r"^https://www\.wildberries\.ru/catalog/\d+/detail\.aspx$"
+        pattern = r"^https://www\.wildberries\.ru/catalog/\d+/detail\.aspx\??.*$"
 
         valid_urls = [url for url in all_urls if url and re.match(pattern, url)]
 
@@ -30,24 +30,16 @@ class GoogleTabelManager:
         """Основная функция для работы с Google Sheets и обновления данных о продуктах"""
         self.wks_prices.clear()
 
-        self.wks_prices.update_acell("A1", "Ссылка")
-        # self.wks_prices.update_acell("B1", "Название")
-        self.wks_prices.update_acell("B1", "Цена со скидкой")
-        self.wks_prices.update_acell("C1", "Цена без скидки")
-        self.wks_prices.update_acell("D1", "Скидка %")
+        # Заголовки столбцов
+        headers = ["Ссылка", "Цена со скидкой", "Цена без скидки", "Скидка %"]
 
-        for idx, (url, data) in enumerate(product_data.items(), start=1):
-            name = data.get("name", "")
-            price = data.get("new", "")
-            price_old = data.get("old", "")
-            delt = data.get("delt", "")
+        self.wks_prices.update("A1:D1", [headers])
+        data_to_update = []
+        for _, (url, data) in enumerate(product_data.items(), start=1):
+            row = [url, data.get("new", ""), data.get("old", ""), data.get("delt", "")]
+            data_to_update.append(row)
 
-            if url:
-                self.wks_prices.update_acell(f"A{idx + 1}", url)
-                # self.wks_prices.update_acell(f"B{idx + 1}", name)
-                self.wks_prices.update_acell(f"B{idx + 1}", price)
-                self.wks_prices.update_acell(f"C{idx + 1}", price_old)
-                self.wks_prices.update_acell(f"D{idx + 1}", delt)
+        self.wks_prices.update(f"A2:D{len(data_to_update) + 1}", data_to_update)
 
         return True
 
