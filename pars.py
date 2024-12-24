@@ -1,5 +1,6 @@
 from pathlib import Path
 from time import sleep
+import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -10,9 +11,9 @@ from webdriver_manager.chrome import ChromeDriverManager as ChromeDriverManagerB
 
 # CONSTS
 
-wisual = False  # Отображать окна браузера или нет
+wisual = True  # Отображать окна браузера или нет
 PROFILE = "main"  # Профиль для браузера
-DEBYG = False  # Режем отладки
+DEBYG = True  # Режем отладки
 PHONE = "..."
 
 
@@ -125,13 +126,20 @@ class ChromeDriverManager:
             driver = self.selekt_profile(PROFILE)
             if prod_id:
                 driver.get(f"https://www.wildberries.ru/catalog/{prod_id}/detail.aspx")
+                if DEBYG:
+                    print(
+                        f"Переходим на страницу https://www.wildberries.ru/catalog/{prod_id}/detail.aspx"
+                    )
             elif url:
                 driver.get(url)
+                if DEBYG:
+                    print(f"Переходим на страницу {url}")
             else:
                 raise ValueError("Не передан продукт")
+            input()
 
             new = (
-                self.wait_by_class("price-block__final-price", driver)
+                self.wait_by_class("price-block__wallet-price", driver)
                 .get_attribute("textContent")
                 .replace("₽", "")
                 .replace(" ", "")
